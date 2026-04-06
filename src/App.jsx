@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import CreateShop from './pages/vendor/CreateShop';
+import ProductManagement from './pages/vendor/ProductManagement';
 
 function App() {
   return (
@@ -13,12 +14,14 @@ function App() {
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          {/* shop creation */}
           <Route path="/vendor/create-shop" element={
             <ProtectedRoute role="vendor">
               <CreateShop />
             </ProtectedRoute>
           } />
 
+          {/* Manage product */}
           <Route path="/vendor/products" element={
             <ProtectedRoute role="vendor">
               <ProductManagement />
