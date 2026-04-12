@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import axios from '../api/axios'
+
 import { useAuth } from '../context/AuthContext'
 
 const Login = () => {
   const navigate = useNavigate()
+  // This is the key for calling login function in useAuth and set the userdata and Token 
   const { login } = useAuth()
   const [formData, setFormData] = useState({
     email: '',

@@ -15,6 +15,27 @@ const CreateShop = () => {
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [locating, setLocating] = useState(false)
+
+  // Location picker ( Get cordinate from browser)
+  const getLocation = () => {
+    setLocating(true)
+    // Geolocation api
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFormData(prev => ({
+          ...prev,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        }))
+        setLocating(false)
+      },
+      (error) => {
+        alert('Could not get location. Please allow location access.')
+        setLocating(false)
+      }
+    )
+  }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -128,6 +149,39 @@ const CreateShop = () => {
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
               placeholder="e.g. 9876543210"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Shop Address
+            </label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+              placeholder="e.g. Main Road, Sambalpur"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Location Coordinates
+            </label>
+            <button
+              type="button"
+              onClick={getLocation}
+              disabled={locating}
+              className="w-full bg-gray-100 text-gray-700 py-2 rounded hover:bg-gray-200 transition"
+            >
+              {locating ? 'Getting location...' : formData.latitude ? 'Location captured!' : 'Use My Current Location'}
+            </button>
+            {formData.latitude && (
+              <p className="text-xs text-green-600 mt-1">
+                Lat: {formData.latitude}, Lng: {formData.longitude}
+              </p>
+            )}
           </div>
 
           <button
