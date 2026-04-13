@@ -52,6 +52,7 @@ const Signup = () => {
             <input
               type="text"
               name="name"
+              autoComplete="current-password" 
               value={formData.name}
               onChange={handleChange}
               required
