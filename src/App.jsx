@@ -8,7 +8,7 @@ import ProductManagement from './pages/vendor/ProductManagement';
 import VendorDashboard from './pages/vendor/VendorDashboard';
 import Marketplace from './pages/customer/Marketplace';
 import ShopDetail from './pages/customer/ShopDetail';
-import MyOrders from './pages/customer/Myorders';
+import MyOrders from './pages/customer/MyOrders';
 import VendorOrders from './pages/vendor/VendorOrders';
 import Cart from './pages/customer/Cart';
 
