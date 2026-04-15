@@ -290,15 +290,6 @@ const Login = () => {
       >
         {/* Overlay */}
         <div className="absolute inset-0 bg-linear-to-b from-slate-900/30 to-slate-900/75" />
-
-        {/* Location pill */}
-        <div className="relative z-10 ml-auto flex items-center gap-2 rounded-full border border-white/10 bg-slate-900/70 px-4 py-2 backdrop-blur-md">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
-          </svg>
-          <span className="text-sm font-medium text-white">Your Location</span>
-          <span className="h-2.5 w-2.5 rounded-full bg-blue-500 ring-2 ring-blue-500/30" />
-        </div>
       </div>
     </div>
   )
