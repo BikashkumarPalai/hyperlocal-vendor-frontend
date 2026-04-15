@@ -285,11 +285,11 @@ const Login = () => {
 
       {/* ── RIGHT PANEL ── */}
       <div
-        className="relative flex flex-1 flex-col justify-between overflow-hidden rounded-r-2xl bg-cover bg-center p-8"
+        className="relative flex flex-1 flex-col justify-between overflow-hidden rounded-r-2xl bg-contain bg-center p-8"
         style={{ backgroundImage: `url(${loginBg})` }}
       >
         {/* Overlay */}
-        <div className="absolute inset-0 bg-linear-to-b from-slate-900/30 to-slate-900/75" />
+        <div className="absolute inset-0 bg-linear-to-b from-slate-900/30 to-slate-900/40" />
       </div>
     </div>
   )
