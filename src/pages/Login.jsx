@@ -299,57 +299,6 @@ const Login = () => {
           <span className="text-sm font-medium text-white">Your Location</span>
           <span className="h-2.5 w-2.5 rounded-full bg-blue-500 ring-2 ring-blue-500/30" />
         </div>
-
-        {/* Bottom content */}
-        <div className="relative z-10 flex flex-col gap-3">
-          <h2 className="text-3xl font-extrabold leading-tight tracking-tight text-white">
-            Everything You Need,<br />
-            Right <span className="text-blue-400">Around You.</span>
-          </h2>
-          <p className="text-sm leading-relaxed text-white/60">
-            Find nearby shops, compare, and get it delivered to your doorstep.
-          </p>
-
-          {/* Feature badges */}
-          <div className="mt-1 flex flex-wrap gap-4">
-            {[
-              {
-                icon: (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
-                  </svg>
-                ),
-                label: 'Nearby Shops', sub: 'Local & Trusted',
-              },
-              {
-                icon: (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                  </svg>
-                ),
-                label: 'Fast Delivery', sub: 'Quick & Reliable',
-              },
-              {
-                icon: (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  </svg>
-                ),
-                label: 'Trusted & Safe', sub: 'Secure Payments',
-              },
-            ].map((f) => (
-              <div key={f.label} className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10">
-                  {f.icon}
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-white">{f.label}</p>
-                  <p className="text-xs text-white/50">{f.sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   )
