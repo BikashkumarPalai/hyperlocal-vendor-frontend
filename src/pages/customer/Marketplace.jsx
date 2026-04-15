@@ -1,3 +1,337 @@
+// import { useState, useEffect } from 'react'
+// import { useNavigate } from 'react-router-dom'
+// import axios from '../../api/axios'
+// import { useAuth } from '../../context/AuthContext'
+// import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet'
+// import L from 'leaflet'
+// import 'leaflet/dist/leaflet.css'
+
+// // Fix leaflet marker icons
+// delete L.Icon.Default.prototype._getIconUrl
+// L.Icon.Default.mergeOptions({
+//   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+//   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+//   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+// })
+
+// // Custom icons
+// const shopIcon = new L.Icon({
+//   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+//   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+//   iconSize: [25, 41],
+//   iconAnchor: [12, 41],
+//   popupAnchor: [1, -34],
+// })
+
+// const userIcon = new L.Icon({
+//   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+//   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+//   iconSize: [25, 41],
+//   iconAnchor: [12, 41],
+//   popupAnchor: [1, -34],
+// })
+
+// // Recenter map when location changes
+// const RecenterMap = ({ lat, lng }) => {
+//   const map = useMap()
+//   useEffect(() => {
+//     if (lat && lng) map.setView([lat, lng], 13)
+//   }, [lat, lng])
+//   return null
+// }
+
+// const Marketplace = () => {
+//   const { user, logout } = useAuth()
+//   const navigate = useNavigate()
+//   const [shops, setShops] = useState([])
+//   const [loading, setLoading] = useState(true)
+//   const [search, setSearch] = useState('')
+//   const [category, setCategory] = useState('')
+//   const [userLocation, setUserLocation] = useState(null)
+//   const [radius, setRadius] = useState(5000)
+//   const [view, setView] = useState('grid')
+//   const [locationError, setLocationError] = useState(false)
+
+//   useEffect(() => {
+//     getUserLocation()
+//   }, [])
+
+//   useEffect(() => {
+//     fetchShops()
+//   }, [userLocation, category, radius])
+
+//   const getUserLocation = () => {
+//     navigator.geolocation.getCurrentPosition(
+//       (position) => {
+//         setUserLocation({
+//           latitude: position.coords.latitude,
+//           longitude: position.coords.longitude
+//         })
+//       },
+//       () => {
+//         setLocationError(true)
+//         fetchShops()
+//       }
+//     )
+//   }
+
+//   const fetchShops = async () => {
+//     try {
+//       setLoading(true)
+//       const params = {}
+//       if (category) params.category = category
+//       if (userLocation) {
+//         params.latitude = userLocation.latitude
+//         params.longitude = userLocation.longitude
+//         params.radius = radius
+//       }
+//       const res = await axios.get('/api/shop/all', { params })
+//       setShops(res.data.shops)
+//     } catch (err) {
+//       console.error(err)
+//     } finally {
+//       setLoading(false)
+//     }
+//   }
+
+//   const handleLogout = () => {
+//     logout()
+//     navigate('/login')
+//   }
+
+//   const filteredShops = shops.filter(shop =>
+//     shop.name.toLowerCase().includes(search.toLowerCase()) ||
+//     (shop.location?.address || '').toLowerCase().includes(search.toLowerCase())
+//   )
+
+//   return (
+//     <div className="min-h-screen bg-gray-100">
+
+//       {/* Navbar */}
+//       <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
+//         <h1 className="text-xl font-bold text-blue-600">Hyperlocal Vendor</h1>
+//         <div className="flex items-center gap-4">
+//           <span className="text-sm text-gray-600">Hello, {user?.name}</span>
+//           <button
+//             onClick={handleLogout}
+//             className="bg-red-100 text-red-600 px-4 py-1 rounded text-sm hover:bg-red-200 transition"
+//           >
+//             Logout
+//           </button>
+//         </div>
+//       </nav>
+
+//       <div className="max-w-6xl mx-auto p-6">
+
+//         {/* Header */}
+//         <div className="flex justify-between items-center mb-4">
+//           <h2 className="text-2xl font-bold text-gray-800">Nearby Shops</h2>
+//           <div className="flex gap-2">
+//             <button
+//               onClick={() => setView('grid')}
+//               className={`px-4 py-1 rounded text-sm font-medium transition ${view === 'grid'
+//                 ? 'bg-blue-600 text-white'
+//                 : 'bg-white text-gray-600 hover:bg-gray-100'
+//                 }`}
+//             >
+//               Grid
+//             </button>
+//             <button
+//               onClick={() => setView('map')}
+//               className={`px-4 py-1 rounded text-sm font-medium transition ${view === 'map'
+//                 ? 'bg-blue-600 text-white'
+//                 : 'bg-white text-gray-600 hover:bg-gray-100'
+//                 }`}
+//             >
+//               Map
+//             </button>
+//           </div>
+//         </div>
+
+//         {/* Location status */}
+//         {locationError && (
+//           <div className="bg-yellow-100 text-yellow-700 p-3 rounded mb-4 text-sm">
+//             Location access denied. Showing all shops. Enable location for nearby results.
+//           </div>
+//         )}
+
+//         {/* Search and Filter */}
+//         <div className="flex gap-3 mb-4">
+//           <input
+//             type="text"
+//             placeholder="Search shops by name or address..."
+//             value={search}
+//             onChange={(e) => setSearch(e.target.value)}
+//             className="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500"
+//           />
+//           <select
+//             value={category}
+//             onChange={(e) => setCategory(e.target.value)}
+//             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+//           >
+//             <option value="">All Categories</option>
+//             <option value="grocery">Grocery</option>
+//             <option value="food">Food</option>
+//             <option value="fruit">Fruit</option>
+//             <option value="bakery">Bakery</option>
+//             <option value="dairy">Dairy</option>
+//             <option value="stationary">Stationary</option>
+//             <option value="other">Other</option>
+//           </select>
+//         </div>
+
+//         {/* Radius slider */}
+//         {userLocation && (
+//           <div className="flex items-center gap-3 mb-6 bg-white p-3 rounded-lg shadow">
+//             <span className="text-sm text-gray-600 whitespace-nowrap">Search radius:</span>
+//             <input
+//               type="range"
+//               min="1000"
+//               max="20000"
+//               step="1000"
+//               value={radius}
+//               onChange={(e) => setRadius(Number(e.target.value))}
+//               className="flex-1"
+//             />
+//             <span className="text-sm font-medium text-blue-600 whitespace-nowrap">
+//               {radius / 1000} km
+//             </span>
+//           </div>
+//         )}
+
+//         {/* MAP VIEW */}
+//         {view === 'map' && (
+//           <div className="bg-white rounded-lg shadow overflow-hidden mb-6">
+//             {userLocation ? (
+//               <MapContainer
+//                 center={[userLocation.latitude, userLocation.longitude]}
+//                 zoom={13}
+//                 style={{ height: '500px', width: '100%' }}
+//               >
+//                 <TileLayer
+//                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+//                   attribution='&copy; OpenStreetMap contributors'
+//                 />
+
+//                 <RecenterMap
+//                   lat={userLocation.latitude}
+//                   lng={userLocation.longitude}
+//                 />
+
+//                 {/* User location marker */}
+//                 <Marker
+//                   position={[userLocation.latitude, userLocation.longitude]}
+//                   icon={userIcon}
+//                 >
+//                   <Popup>You are here</Popup>
+//                 </Marker>
+
+//                 {/* Radius circle */}
+//                 <Circle
+//                   center={[userLocation.latitude, userLocation.longitude]}
+//                   radius={radius}
+//                   pathOptions={{
+//                     color: 'blue',
+//                     fillColor: 'blue',
+//                     fillOpacity: 0.05
+//                   }}
+//                 />
+
+//                 {/* Shop markers */}
+//                 {filteredShops.map(shop => (
+//                   shop.location?.coordinates && (
+//                     <Marker
+//                       key={shop._id}
+//                       position={[
+//                         shop.location.coordinates[1],
+//                         shop.location.coordinates[0]
+//                       ]}
+//                       icon={shopIcon}
+//                     >
+//                       <Popup>
+//                         <div className="p-1">
+//                           <p className="font-bold text-gray-800">{shop.name}</p>
+//                           <p className="text-sm text-blue-600 capitalize">{shop.category}</p>
+//                           <p className="text-xs text-gray-500 mb-2">
+//                             {shop.location?.address || shop.location.address}
+//                           </p>
+//                           <button
+//                             onClick={() => navigate(`/shop/${shop._id}`)}
+//                             className="bg-blue-600 text-white px-3 py-1 rounded text-xs w-full"
+//                           >
+//                             View Shop
+//                           </button>
+//                         </div>
+//                       </Popup>
+//                     </Marker>
+//                   )
+//                 ))}
+//               </MapContainer>
+//             ) : (
+//               <div className="h-64 flex items-center justify-center text-gray-500">
+//                 Enable location to see map
+//               </div>
+//             )}
+//           </div>
+//         )}
+
+//         {/* GRID VIEW */}
+//         {view === 'grid' && (
+//           <>
+//             {loading ? (
+//               <div className="text-center text-gray-500 py-12">Loading shops...</div>
+//             ) : filteredShops.length === 0 ? (
+//               <div className="text-center text-gray-500 py-12">
+//                 No shops found in this area. Try increasing the radius.
+//               </div>
+//             ) : (
+//               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+//                 {filteredShops.map(shop => (
+//                   <div
+//                     key={shop._id}
+//                     onClick={() => navigate(`/shop/${shop._id}`)}
+//                     className="bg-white rounded-lg shadow p-5 cursor-pointer hover:shadow-md transition"
+//                   >
+//                     <div className="flex justify-between items-start mb-2">
+//                       <h3 className="font-bold text-gray-800 text-lg">{shop.name}</h3>
+//                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${shop.isOpen
+//                         ? 'bg-green-100 text-green-700'
+//                         : 'bg-red-100 text-red-600'
+//                         }`}>
+//                         {shop.isOpen ? 'Open' : 'Closed'}
+//                       </span>
+//                     </div>
+//                     <p className="text-sm text-blue-600 font-medium capitalize mb-1">
+//                       {shop.category}
+//                     </p>
+//                     <p className="text-sm text-gray-500 mb-1">
+//                       {shop.location?.address || shop.location}
+//                     </p>
+//                     <p className="text-sm text-gray-600 line-clamp-2">
+//                       {shop.description}
+//                     </p>
+//                     <p className="text-sm text-gray-500 mt-2">{shop.contact}</p>
+//                   </div>
+//                 ))}
+//               </div>
+//             )}
+//           </>
+//         )}
+//       </div>
+//     </div>
+//   )
+// }
+
+// export default Marketplace
+
+
+
+
+
+
+
+
+
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
