@@ -23,39 +23,81 @@ const Cart = () => {
     setLoading(true)
     setError('')
 
-    // Get customer location
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         try {
-          const orderItems = cart.map(item => ({
-            product: item._id,
-            name: item.name,
-            price: item.price,
-            unit: item.unit,
-            quantity: item.quantity
-          }))
-
-          await axios.post('/api/order/place', {
-            shop: cartShopId,
-            items: orderItems,
-            totalPrice,
-            customerLat: position.coords.latitude,
-            customerLng: position.coords.longitude
+          // Step 1 — create Razorpay payment order
+          const paymentRes = await axios.post('/api/order/create-payment', {
+            totalPrice
           }, {
             headers: { Authorization: `Bearer ${token}` }
           })
 
-          clearCart()
-          navigate('/customer/orders')
+          const { orderId, amount, currency, keyId } = paymentRes.data
+
+          // Step 2 — open Razorpay popup
+          const options = {
+            key: keyId,
+            amount,
+            currency,
+            name: 'Hyperlocal Vendor',
+            description: 'Order Payment',
+            order_id: orderId,
+            handler: async (response) => {
+              try {
+                // Step 3 — verify payment and save order
+                const orderItems = cart.map(item => ({    // Array of objects of multiple products
+                  product: item._id,
+                  name: item.name,
+                  price: item.price,
+                  unit: item.unit,
+                  quantity: item.quantity
+                }))
+
+                await axios.post('/api/order/verify-payment', {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  shop: cartShopId,
+                  items: orderItems,
+                  totalPrice,
+                  customerLat: position.coords.latitude,
+                  customerLng: position.coords.longitude
+                }, {
+                  headers: { Authorization: `Bearer ${token}` }
+                })
+
+                clearCart()
+                navigate('/customer/orders')
+
+              } catch (err) {
+                setError(err.response?.data?.message || 'Order saving failed')
+              }
+            },
+            prefill: {
+              name: user?.name,
+              email: user?.email
+            },
+            theme: { color: '#2563EB' },
+            modal: {
+              ondismiss: () => {
+                setLoading(false)
+                setError('Payment cancelled')
+              }
+            }
+          }
+
+          const razorpayInstance = new window.Razorpay(options)
+          razorpayInstance.open()
 
         } catch (err) {
-          setError(err.response?.data?.message || 'Failed to place order')
+          setError(err.response?.data?.message || 'Failed to initiate payment')
         } finally {
           setLoading(false)
         }
       },
       () => {
-        setError('Location access required to place order. Please enable location.')
+        setError('Location access required to place order.')
         setLoading(false)
       }
     )
@@ -160,13 +202,13 @@ const Cart = () => {
           </div>
         </div>
 
-        {/* Place Order Button */}
+        {/* Place Order Button And Payment also */}
         <button
           onClick={handlePlaceOrder}
           disabled={loading}
           className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-green-700 transition disabled:opacity-50"
         >
-          {loading ? 'Placing Order...' : 'Place Order'}
+          {loading ? 'Processing...' : `Pay ₹${totalPrice} & Place Order`}
         </button>
 
         <button
