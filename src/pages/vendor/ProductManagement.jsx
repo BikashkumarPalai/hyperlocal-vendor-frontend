@@ -158,8 +158,6 @@ const ProductManagement = () => {
                 <option value="">Select Unit</option>
                 <option value="Kg">Kg</option>
                 <option value="litre">litre</option>
-                <option value="ml">ml</option>
-                <option value="gram">gram</option>
                 <option value="piece">piece</option>
                 <option value="Dozen">Dozen</option>
               </select>
