@@ -146,7 +146,7 @@ const ProductManagement = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Unit
               </label>
-              <input
+              <select
                 type="text"
                 name="unit"
                 value={formData.unit}
@@ -154,7 +154,16 @@ const ProductManagement = () => {
                 required
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                 placeholder="e.g. kg, litre, piece"
-              />
+              >
+                <option value="">Select Unit</option>
+                <option value="Kg">Kg</option>
+                <option value="litre">litre</option>
+                <option value="ml">ml</option>
+                <option value="gram">gram</option>
+                <option value="piece">piece</option>
+                <option value="Dozen">Dozen</option>
+              </select>
+
             </div>
 
             <div>
