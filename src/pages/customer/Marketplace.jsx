@@ -1,4 +1,339 @@
-// import { useState, useEffect } from 'react'
+// // import { useState, useEffect } from 'react'
+// // import { useNavigate } from 'react-router-dom'
+// // import axios from '../../api/axios'
+// // import { useAuth } from '../../context/AuthContext'
+// // import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet'
+// // import L from 'leaflet'
+// // import 'leaflet/dist/leaflet.css'
+
+// // // Fix leaflet marker icons
+// // delete L.Icon.Default.prototype._getIconUrl
+// // L.Icon.Default.mergeOptions({
+// //   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+// //   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+// //   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+// // })
+
+// // // Custom icons
+// // const shopIcon = new L.Icon({
+// //   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+// //   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+// //   iconSize: [25, 41],
+// //   iconAnchor: [12, 41],
+// //   popupAnchor: [1, -34],
+// // })
+
+// // const userIcon = new L.Icon({
+// //   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+// //   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+// //   iconSize: [25, 41],
+// //   iconAnchor: [12, 41],
+// //   popupAnchor: [1, -34],
+// // })
+
+// // // Recenter map when location changes
+// // const RecenterMap = ({ lat, lng }) => {
+// //   const map = useMap()
+// //   useEffect(() => {
+// //     if (lat && lng) map.setView([lat, lng], 13)
+// //   }, [lat, lng])
+// //   return null
+// // }
+
+// // const Marketplace = () => {
+// //   const { user, logout } = useAuth()
+// //   const navigate = useNavigate()
+// //   const [shops, setShops] = useState([])
+// //   const [loading, setLoading] = useState(true)
+// //   const [search, setSearch] = useState('')
+// //   const [category, setCategory] = useState('')
+// //   const [userLocation, setUserLocation] = useState(null)
+// //   const [radius, setRadius] = useState(5000)
+// //   const [view, setView] = useState('grid')
+// //   const [locationError, setLocationError] = useState(false)
+
+// //   useEffect(() => {
+// //     getUserLocation()
+// //   }, [])
+
+// //   useEffect(() => {
+// //     fetchShops()
+// //   }, [userLocation, category, radius])
+
+// //   const getUserLocation = () => {
+// //     navigator.geolocation.getCurrentPosition(
+// //       (position) => {
+// //         setUserLocation({
+// //           latitude: position.coords.latitude,
+// //           longitude: position.coords.longitude
+// //         })
+// //       },
+// //       () => {
+// //         setLocationError(true)
+// //         fetchShops()
+// //       }
+// //     )
+// //   }
+
+// //   const fetchShops = async () => {
+// //     try {
+// //       setLoading(true)
+// //       const params = {}
+// //       if (category) params.category = category
+// //       if (userLocation) {
+// //         params.latitude = userLocation.latitude
+// //         params.longitude = userLocation.longitude
+// //         params.radius = radius
+// //       }
+// //       const res = await axios.get('/api/shop/all', { params })
+// //       setShops(res.data.shops)
+// //     } catch (err) {
+// //       console.error(err)
+// //     } finally {
+// //       setLoading(false)
+// //     }
+// //   }
+
+// //   const handleLogout = () => {
+// //     logout()
+// //     navigate('/login')
+// //   }
+
+// //   const filteredShops = shops.filter(shop =>
+// //     shop.name.toLowerCase().includes(search.toLowerCase()) ||
+// //     (shop.location?.address || '').toLowerCase().includes(search.toLowerCase())
+// //   )
+
+// //   return (
+// //     <div className="min-h-screen bg-gray-100">
+
+// //       {/* Navbar */}
+// //       <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
+// //         <h1 className="text-xl font-bold text-blue-600">Hyperlocal Vendor</h1>
+// //         <div className="flex items-center gap-4">
+// //           <span className="text-sm text-gray-600">Hello, {user?.name}</span>
+// //           <button
+// //             onClick={handleLogout}
+// //             className="bg-red-100 text-red-600 px-4 py-1 rounded text-sm hover:bg-red-200 transition"
+// //           >
+// //             Logout
+// //           </button>
+// //         </div>
+// //       </nav>
+
+// //       <div className="max-w-6xl mx-auto p-6">
+
+// //         {/* Header */}
+// //         <div className="flex justify-between items-center mb-4">
+// //           <h2 className="text-2xl font-bold text-gray-800">Nearby Shops</h2>
+// //           <div className="flex gap-2">
+// //             <button
+// //               onClick={() => setView('grid')}
+// //               className={`px-4 py-1 rounded text-sm font-medium transition ${view === 'grid'
+// //                 ? 'bg-blue-600 text-white'
+// //                 : 'bg-white text-gray-600 hover:bg-gray-100'
+// //                 }`}
+// //             >
+// //               Grid
+// //             </button>
+// //             <button
+// //               onClick={() => setView('map')}
+// //               className={`px-4 py-1 rounded text-sm font-medium transition ${view === 'map'
+// //                 ? 'bg-blue-600 text-white'
+// //                 : 'bg-white text-gray-600 hover:bg-gray-100'
+// //                 }`}
+// //             >
+// //               Map
+// //             </button>
+// //           </div>
+// //         </div>
+
+// //         {/* Location status */}
+// //         {locationError && (
+// //           <div className="bg-yellow-100 text-yellow-700 p-3 rounded mb-4 text-sm">
+// //             Location access denied. Showing all shops. Enable location for nearby results.
+// //           </div>
+// //         )}
+
+// //         {/* Search and Filter */}
+// //         <div className="flex gap-3 mb-4">
+// //           <input
+// //             type="text"
+// //             placeholder="Search shops by name or address..."
+// //             value={search}
+// //             onChange={(e) => setSearch(e.target.value)}
+// //             className="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500"
+// //           />
+// //           <select
+// //             value={category}
+// //             onChange={(e) => setCategory(e.target.value)}
+// //             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+// //           >
+// //             <option value="">All Categories</option>
+// //             <option value="grocery">Grocery</option>
+// //             <option value="food">Food</option>
+// //             <option value="fruit">Fruit</option>
+// //             <option value="bakery">Bakery</option>
+// //             <option value="dairy">Dairy</option>
+// //             <option value="stationary">Stationary</option>
+// //             <option value="other">Other</option>
+// //           </select>
+// //         </div>
+
+// //         {/* Radius slider */}
+// //         {userLocation && (
+// //           <div className="flex items-center gap-3 mb-6 bg-white p-3 rounded-lg shadow">
+// //             <span className="text-sm text-gray-600 whitespace-nowrap">Search radius:</span>
+// //             <input
+// //               type="range"
+// //               min="1000"
+// //               max="20000"
+// //               step="1000"
+// //               value={radius}
+// //               onChange={(e) => setRadius(Number(e.target.value))}
+// //               className="flex-1"
+// //             />
+// //             <span className="text-sm font-medium text-blue-600 whitespace-nowrap">
+// //               {radius / 1000} km
+// //             </span>
+// //           </div>
+// //         )}
+
+// //         {/* MAP VIEW */}
+// //         {view === 'map' && (
+// //           <div className="bg-white rounded-lg shadow overflow-hidden mb-6">
+// //             {userLocation ? (
+// //               <MapContainer
+// //                 center={[userLocation.latitude, userLocation.longitude]}
+// //                 zoom={13}
+// //                 style={{ height: '500px', width: '100%' }}
+// //               >
+// //                 <TileLayer
+// //                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+// //                   attribution='&copy; OpenStreetMap contributors'
+// //                 />
+
+// //                 <RecenterMap
+// //                   lat={userLocation.latitude}
+// //                   lng={userLocation.longitude}
+// //                 />
+
+// //                 {/* User location marker */}
+// //                 <Marker
+// //                   position={[userLocation.latitude, userLocation.longitude]}
+// //                   icon={userIcon}
+// //                 >
+// //                   <Popup>You are here</Popup>
+// //                 </Marker>
+
+// //                 {/* Radius circle */}
+// //                 <Circle
+// //                   center={[userLocation.latitude, userLocation.longitude]}
+// //                   radius={radius}
+// //                   pathOptions={{
+// //                     color: 'blue',
+// //                     fillColor: 'blue',
+// //                     fillOpacity: 0.05
+// //                   }}
+// //                 />
+
+// //                 {/* Shop markers */}
+// //                 {filteredShops.map(shop => (
+// //                   shop.location?.coordinates && (
+// //                     <Marker
+// //                       key={shop._id}
+// //                       position={[
+// //                         shop.location.coordinates[1],
+// //                         shop.location.coordinates[0]
+// //                       ]}
+// //                       icon={shopIcon}
+// //                     >
+// //                       <Popup>
+// //                         <div className="p-1">
+// //                           <p className="font-bold text-gray-800">{shop.name}</p>
+// //                           <p className="text-sm text-blue-600 capitalize">{shop.category}</p>
+// //                           <p className="text-xs text-gray-500 mb-2">
+// //                             {shop.location?.address || shop.location.address}
+// //                           </p>
+// //                           <button
+// //                             onClick={() => navigate(`/shop/${shop._id}`)}
+// //                             className="bg-blue-600 text-white px-3 py-1 rounded text-xs w-full"
+// //                           >
+// //                             View Shop
+// //                           </button>
+// //                         </div>
+// //                       </Popup>
+// //                     </Marker>
+// //                   )
+// //                 ))}
+// //               </MapContainer>
+// //             ) : (
+// //               <div className="h-64 flex items-center justify-center text-gray-500">
+// //                 Enable location to see map
+// //               </div>
+// //             )}
+// //           </div>
+// //         )}
+
+// //         {/* GRID VIEW */}
+// //         {view === 'grid' && (
+// //           <>
+// //             {loading ? (
+// //               <div className="text-center text-gray-500 py-12">Loading shops...</div>
+// //             ) : filteredShops.length === 0 ? (
+// //               <div className="text-center text-gray-500 py-12">
+// //                 No shops found in this area. Try increasing the radius.
+// //               </div>
+// //             ) : (
+// //               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+// //                 {filteredShops.map(shop => (
+// //                   <div
+// //                     key={shop._id}
+// //                     onClick={() => navigate(`/shop/${shop._id}`)}
+// //                     className="bg-white rounded-lg shadow p-5 cursor-pointer hover:shadow-md transition"
+// //                   >
+// //                     <div className="flex justify-between items-start mb-2">
+// //                       <h3 className="font-bold text-gray-800 text-lg">{shop.name}</h3>
+// //                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${shop.isOpen
+// //                         ? 'bg-green-100 text-green-700'
+// //                         : 'bg-red-100 text-red-600'
+// //                         }`}>
+// //                         {shop.isOpen ? 'Open' : 'Closed'}
+// //                       </span>
+// //                     </div>
+// //                     <p className="text-sm text-blue-600 font-medium capitalize mb-1">
+// //                       {shop.category}
+// //                     </p>
+// //                     <p className="text-sm text-gray-500 mb-1">
+// //                       {shop.location?.address || shop.location}
+// //                     </p>
+// //                     <p className="text-sm text-gray-600 line-clamp-2">
+// //                       {shop.description}
+// //                     </p>
+// //                     <p className="text-sm text-gray-500 mt-2">{shop.contact}</p>
+// //                   </div>
+// //                 ))}
+// //               </div>
+// //             )}
+// //           </>
+// //         )}
+// //       </div>
+// //     </div>
+// //   )
+// // }
+
+// // export default Marketplace
+
+
+
+
+
+
+
+
+
+// import { useState, useEffect, useRef } from 'react'
+// import { createPortal } from 'react-dom'
 // import { useNavigate } from 'react-router-dom'
 // import axios from '../../api/axios'
 // import { useAuth } from '../../context/AuthContext'
@@ -6,7 +341,6 @@
 // import L from 'leaflet'
 // import 'leaflet/dist/leaflet.css'
 
-// // Fix leaflet marker icons
 // delete L.Icon.Default.prototype._getIconUrl
 // L.Icon.Default.mergeOptions({
 //   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -14,33 +348,183 @@
 //   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 // })
 
-// // Custom icons
 // const shopIcon = new L.Icon({
 //   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
 //   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-//   iconSize: [25, 41],
-//   iconAnchor: [12, 41],
-//   popupAnchor: [1, -34],
+//   iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34],
 // })
-
 // const userIcon = new L.Icon({
 //   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
 //   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-//   iconSize: [25, 41],
-//   iconAnchor: [12, 41],
-//   popupAnchor: [1, -34],
+//   iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34],
 // })
 
-// // Recenter map when location changes
 // const RecenterMap = ({ lat, lng }) => {
 //   const map = useMap()
-//   useEffect(() => {
-//     if (lat && lng) map.setView([lat, lng], 13)
-//   }, [lat, lng])
+//   useEffect(() => { if (lat && lng) map.setView([lat, lng], 13) }, [lat, lng])
 //   return null
 // }
 
-// const Marketplace = () => {
+// const MapResizer = ({ expanded }) => {
+//   const map = useMap()
+//   useEffect(() => {
+//     const t = setTimeout(() => map.invalidateSize(), 300)
+//     return () => clearTimeout(t)
+//   }, [expanded])
+//   return null
+// }
+
+// const CATEGORIES = [
+//   { id: 'grocery', label: 'Grocery', emoji: '🛒', color: '#22c55e', bg: '#f0fdf4' },
+//   { id: 'food', label: 'Food', emoji: '🍱', color: '#f97316', bg: '#fff7ed' },
+//   { id: 'fruit', label: 'Fruits', emoji: '🍎', color: '#ef4444', bg: '#fef2f2' },
+//   { id: 'bakery', label: 'Bakery', emoji: '🥐', color: '#f59e0b', bg: '#fffbeb' },
+//   { id: 'dairy', label: 'Dairy', emoji: '🥛', color: '#3b82f6', bg: '#eff6ff' },
+//   { id: 'stationary', label: 'Stationery', emoji: '📚', color: '#8b5cf6', bg: '#f5f3ff' },
+//   { id: 'other', label: 'Other', emoji: '🏪', color: '#64748b', bg: '#f8fafc' },
+// ]
+
+// const getCat = id => CATEGORIES.find(c => c.id === id) || CATEGORIES[6]
+
+// const MapPanel = ({ userLocation, filteredShops, mapExpanded, setMapExpanded, navigate }) => {
+//   const mapEl = (
+//     <MapContainer
+//       center={userLocation ? [userLocation.latitude, userLocation.longitude] : [20.5937, 78.9629]}
+//       zoom={13}
+//       style={{ height: '100%', width: '100%' }}
+//     >
+//       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' />
+//       {userLocation && <RecenterMap lat={userLocation.latitude} lng={userLocation.longitude} />}
+//       <MapResizer expanded={mapExpanded} />
+//       {userLocation && (
+//         <>
+//           <Marker position={[userLocation.latitude, userLocation.longitude]} icon={userIcon}>
+//             <Popup>📍 You are here</Popup>
+//           </Marker>
+//           <Circle
+//             center={[userLocation.latitude, userLocation.longitude]}
+//             radius={10000}
+//             pathOptions={{ color: '#f97316', fillColor: '#f97316', fillOpacity: 0.04, weight: 1.5 }}
+//           />
+//         </>
+//       )}
+//       {filteredShops.map(shop => shop.location?.coordinates && (
+//         <Marker key={shop._id} position={[shop.location.coordinates[1], shop.location.coordinates[0]]} icon={shopIcon}>
+//           <Popup>
+//             <div style={{ minWidth: 160, padding: 6, fontFamily: 'Outfit, sans-serif' }}>
+//               <p style={{ fontWeight: 700, fontSize: 14, marginBottom: 3 }}>{shop.name}</p>
+//               <p style={{ fontSize: 12, color: getCat(shop.category).color, marginBottom: 3 }}>
+//                 {getCat(shop.category).emoji} {shop.category}
+//               </p>
+//               <p style={{ fontSize: 12, color: '#64748b', marginBottom: 10 }}>{shop.location?.address}</p>
+//               <button
+//                 onClick={() => navigate(`/shop/${shop._id}`)}
+//                 style={{ background: '#f97316', color: 'white', border: 'none', padding: '7px 14px', borderRadius: 8, fontSize: 12, cursor: 'pointer', width: '100%', fontWeight: 600 }}
+//               >
+//                 View Shop →
+//               </button>
+//             </div>
+//           </Popup>
+//         </Marker>
+//       ))}
+//     </MapContainer>
+//   )
+
+//   const header = (
+//     <div style={{ background: '#fff', padding: '12px 16px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 8 }}>
+//       <div style={{ width: 28, height: 28, borderRadius: 8, background: '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>🗺️</div>
+//       <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>Live Map</span>
+//       <span style={{ fontSize: 12, color: '#94a3b8', marginLeft: 'auto', marginRight: 10, fontFamily: 'Outfit, sans-serif' }}>
+//         {filteredShops.filter(s => s.location?.coordinates).length} shops
+//       </span>
+//       <button
+//         onClick={() => setMapExpanded(v => !v)}
+//         style={{ background: mapExpanded ? '#f1f5f9' : '#fff7ed', border: 'none', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 700, color: mapExpanded ? '#374151' : '#f97316', fontFamily: 'Outfit, sans-serif' }}
+//       >
+//         {mapExpanded ? '✕ Close' : '⛶ Expand'}
+//       </button>
+//     </div>
+//   )
+
+//   if (mapExpanded) return createPortal(
+//     <>
+//       <div onClick={() => setMapExpanded(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 998 }} />
+//       <div style={{ position: 'fixed', inset: 0, zIndex: 999, display: 'flex', flexDirection: 'column', background: '#fff' }}>
+//         {header}
+//         <div style={{ flex: 1 }}>{mapEl}</div>
+//       </div>
+//     </>,
+//     document.body
+//   )
+
+//   return (
+//     <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid #f1f5f9', boxShadow: '0 2px 16px rgba(0,0,0,0.06)', position: 'sticky', top: 80 }}>
+//       {header}
+//       <div style={{ height: 420 }}>
+//         {userLocation ? mapEl : (
+//           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, background: '#f8fafc' }}>
+//             <span style={{ fontSize: 36 }}>📍</span>
+//             <p style={{ fontSize: 13, color: '#94a3b8', fontFamily: 'Outfit, sans-serif' }}>Enable location to see map</p>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   )
+// }
+
+// const ShopCard = ({ shop, navigate }) => {
+//   const cat = getCat(shop.category)
+//   return (
+//     <div
+//       className="shop-card"
+//       onClick={() => navigate(`/shop/${shop._id}`)}
+//       style={{ '--cat-color': cat.color, '--cat-bg': cat.bg }}
+//     >
+//       {/* Top color bar */}
+//       <div className="card-bar" />
+
+//       <div style={{ padding: '18px 18px 16px' }}>
+//         {/* Header row */}
+//         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+//           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+//             <div className="shop-icon-wrap">
+//               <span style={{ fontSize: 22 }}>{cat.emoji}</span>
+//             </div>
+//             <div>
+//               <h3 className="shop-name">{shop.name}</h3>
+//               <span className="shop-cat-badge">{cat.emoji} {cat.label}</span>
+//             </div>
+//           </div>
+//           <span className={shop.isOpen ? 'badge-open' : 'badge-closed'}>
+//             <span className="badge-dot" />
+//             {shop.isOpen ? 'Open' : 'Closed'}
+//           </span>
+//         </div>
+
+//         {/* Description */}
+//         <p className="shop-desc">{shop.description}</p>
+
+//         {/* Footer */}
+//         <div className="card-footer">
+//           <span className="shop-addr">
+//             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+//               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
+//             </svg>
+//             {shop.location?.address || 'Location not set'}
+//           </span>
+//           <span className="view-link">
+//             View
+//             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+//               <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+//             </svg>
+//           </span>
+//         </div>
+//       </div>
+//     </div>
+//   )
+// }
+
+// export default function Marketplace() {
 //   const { user, logout } = useAuth()
 //   const navigate = useNavigate()
 //   const [shops, setShops] = useState([])
@@ -48,30 +532,29 @@
 //   const [search, setSearch] = useState('')
 //   const [category, setCategory] = useState('')
 //   const [userLocation, setUserLocation] = useState(null)
-//   const [radius, setRadius] = useState(5000)
-//   const [view, setView] = useState('grid')
 //   const [locationError, setLocationError] = useState(false)
+//   const [mapExpanded, setMapExpanded] = useState(false)
+//   const [scrolled, setScrolled] = useState(false)
+//   const searchRef = useRef(null)
 
 //   useEffect(() => {
-//     getUserLocation()
+//     const onScroll = () => setScrolled(window.scrollY > 10)
+//     window.addEventListener('scroll', onScroll)
+//     return () => window.removeEventListener('scroll', onScroll)
 //   }, [])
 
 //   useEffect(() => {
-//     fetchShops()
-//   }, [userLocation, category, radius])
+//     document.body.style.overflow = mapExpanded ? 'hidden' : ''
+//     return () => { document.body.style.overflow = '' }
+//   }, [mapExpanded])
+
+//   useEffect(() => { getUserLocation() }, [])
+//   useEffect(() => { fetchShops() }, [userLocation])
 
 //   const getUserLocation = () => {
 //     navigator.geolocation.getCurrentPosition(
-//       (position) => {
-//         setUserLocation({
-//           latitude: position.coords.latitude,
-//           longitude: position.coords.longitude
-//         })
-//       },
-//       () => {
-//         setLocationError(true)
-//         fetchShops()
-//       }
+//       pos => setUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+//       () => { setLocationError(true); fetchShops() }
 //     )
 //   }
 
@@ -79,261 +562,320 @@
 //     try {
 //       setLoading(true)
 //       const params = {}
-//       if (category) params.category = category
-//       if (userLocation) {
-//         params.latitude = userLocation.latitude
-//         params.longitude = userLocation.longitude
-//         params.radius = radius
-//       }
+//       if (userLocation) { params.latitude = userLocation.latitude; params.longitude = userLocation.longitude; params.radius = 10000 }
 //       const res = await axios.get('/api/shop/all', { params })
 //       setShops(res.data.shops)
-//     } catch (err) {
-//       console.error(err)
-//     } finally {
-//       setLoading(false)
-//     }
+//     } catch (err) { console.error(err) }
+//     finally { setLoading(false) }
 //   }
 
-//   const handleLogout = () => {
-//     logout()
-//     navigate('/login')
-//   }
+//   const filteredShops = shops.filter(shop => {
+//     const matchesSearch = shop.name.toLowerCase().includes(search.toLowerCase()) || (shop.location?.address || '').toLowerCase().includes(search.toLowerCase())
+//     const matchesCategory = category === '' || shop.category === category
+//     return matchesSearch && matchesCategory
+//   })
 
-//   const filteredShops = shops.filter(shop =>
-//     shop.name.toLowerCase().includes(search.toLowerCase()) ||
-//     (shop.location?.address || '').toLowerCase().includes(search.toLowerCase())
-//   )
+//   const openCount = filteredShops.filter(s => s.isOpen).length
 
 //   return (
-//     <div className="min-h-screen bg-gray-100">
+//     <div style={{ minHeight: '100vh', background: '#fafafa', fontFamily: "'Outfit', sans-serif" }}>
+//       <style>{`
+//         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+//         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-//       {/* Navbar */}
-//       <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
-//         <h1 className="text-xl font-bold text-blue-600">Hyperlocal Vendor</h1>
-//         <div className="flex items-center gap-4">
-//           <span className="text-sm text-gray-600">Hello, {user?.name}</span>
-//           <button
-//             onClick={handleLogout}
-//             className="bg-red-100 text-red-600 px-4 py-1 rounded text-sm hover:bg-red-200 transition"
-//           >
-//             Logout
-//           </button>
+//         /* ── Navbar ── */
+//         .navbar {
+//           position: sticky; top: 0; z-index: 100;
+//           background: #fff;
+//           border-bottom: 1px solid #f1f5f9;
+//           transition: box-shadow 0.2s;
+//         }
+//         .navbar.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+//         .navbar-inner { max-width: 1340px; margin: 0 auto; padding: 0 28px; height: 66px; display: flex; align-items: center; gap: 24px; }
+//         .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+//         .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #f97316, #ef4444); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+//         .logo-text { font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
+//         .logo-text span { color: #f97316; }
+
+//         /* Location chip */
+//         .location-chip { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; border: 1.5px solid #f1f5f9; background: #fafafa; cursor: pointer; font-size: 13px; font-weight: 600; color: #374151; transition: all 0.15s; }
+//         .location-chip:hover { border-color: #f97316; color: #f97316; }
+//         .location-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+
+//         /* Nav search */
+//         .nav-search-wrap { flex: 1; max-width: 480px; position: relative; }
+//         .nav-search { width: 100%; height: 42px; padding: 0 16px 0 42px; border-radius: 12px; border: 1.5px solid #f1f5f9; background: #f8fafc; font-size: 14px; font-family: 'Outfit', sans-serif; color: #0f172a; outline: none; transition: all 0.15s; }
+//         .nav-search:focus { border-color: #f97316; background: #fff; box-shadow: 0 0 0 3px rgba(249,115,22,0.1); }
+//         .nav-search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
+//         .nav-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+
+//         /* Nav buttons */
+//         .nav-btn { display: flex; align-items: center; gap: 7px; padding: 8px 16px; border-radius: 10px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; font-family: 'Outfit', sans-serif; transition: all 0.15s; }
+//         .nav-btn-ghost { background: transparent; color: #374151; }
+//         .nav-btn-ghost:hover { background: #f8fafc; }
+//         .nav-btn-user { background: #fff7ed; color: #f97316; }
+//         .nav-btn-logout { background: #fef2f2; color: #ef4444; }
+//         .nav-btn-logout:hover { background: #fee2e2; }
+//         .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #f97316, #ef4444); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: white; }
+
+//         /* ── Hero strip ── */
+//         .hero-strip { background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 50%, #fdf2f8 100%); border-bottom: 1px solid #f1f5f9; padding: 28px 0 24px; }
+//         .hero-inner { max-width: 1340px; margin: 0 auto; padding: 0 28px; }
+//         .hero-title { font-size: 32px; font-weight: 900; color: #0f172a; letter-spacing: -1px; line-height: 1.1; margin-bottom: 6px; }
+//         .hero-title span { color: #f97316; }
+//         .hero-sub { font-size: 15px; color: #64748b; font-weight: 500; }
+
+//         /* Stats row */
+//         .stats-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+//         .stat-chip { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #f1f5f9; border-radius: 100px; padding: 7px 16px; font-size: 13px; font-weight: 600; color: #374151; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+//         .stat-chip .ic { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+
+//         /* ── Main layout ── */
+//         .main-wrap { max-width: 1340px; margin: 0 auto; padding: 28px 28px; }
+//         .content-grid { display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; }
+
+//         /* ── Filter bar ── */
+//         .filter-bar { background: #fff; border-bottom: 1px solid #f1f5f9; position: sticky; top: 66px; z-index: 50; }
+//         .filter-bar-inner { max-width: 1340px; margin: 0 auto; padding: 12px 28px; display: flex; gap: 8px; overflow-x: auto; }
+//         .filter-bar-inner::-webkit-scrollbar { display: none; }
+
+//         .cat-pill {
+//           display: inline-flex; align-items: center; gap: 6px;
+//           padding: 8px 16px; border-radius: 100px;
+//           font-size: 13px; font-weight: 600; font-family: 'Outfit', sans-serif;
+//           cursor: pointer; white-space: nowrap;
+//           border: 1.5px solid #e8ecf0;
+//           background: #fff; color: #64748b;
+//           transition: all 0.15s; flex-shrink: 0;
+//         }
+//         .cat-pill:hover { border-color: #cbd5e1; transform: translateY(-1px); }
+//         .cat-pill.active { color: #fff; border-color: transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-1px); }
+
+//         /* ── Shop cards ── */
+//         .shop-card {
+//           background: #fff;
+//           border-radius: 16px;
+//           overflow: hidden;
+//           cursor: pointer;
+//           border: 1px solid #f1f5f9;
+//           position: relative;
+//           transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+//         }
+//         .shop-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); border-color: transparent; }
+//         .card-bar { height: 4px; background: var(--cat-color); }
+//         .shop-icon-wrap { width: 46px; height: 46px; border-radius: 12px; background: var(--cat-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+//         .shop-name { font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 3px; letter-spacing: -0.2px; }
+//         .shop-cat-badge { font-size: 11px; font-weight: 700; color: var(--cat-color); text-transform: uppercase; letter-spacing: 0.5px; }
+//         .shop-desc { font-size: 13px; color: #64748b; line-height: 1.55; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+//         .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #f8fafc; }
+//         .shop-addr { font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 4px; flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+//         .view-link { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #f97316; flex-shrink: 0; margin-left: 8px; }
+//         .shop-card:hover .view-link { gap: 6px; }
+
+//         /* Badges */
+//         .badge-open, .badge-closed { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+//         .badge-open { background: #f0fdf4; color: #16a34a; }
+//         .badge-closed { background: #fef2f2; color: #ef4444; }
+//         .badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+//         .badge-open .badge-dot { background: #22c55e; animation: pulse-green 2s infinite; }
+//         .badge-closed .badge-dot { background: #ef4444; }
+//         @keyframes pulse-green { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+
+//         /* Skeleton */
+//         .skeleton { background: linear-gradient(90deg, #f8fafc 25%, #f1f5f9 50%, #f8fafc 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 16px; }
+//         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+//         /* Scroll */
+//         .shops-list::-webkit-scrollbar { width: 4px; }
+//         .shops-list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+
+//         /* Empty */
+//         .empty-state { text-align: center; padding: 60px 20px; }
+//         .empty-icon { font-size: 52px; margin-bottom: 14px; }
+//         .empty-title { font-size: 18px; font-weight: 800; color: #374151; margin-bottom: 6px; }
+//         .empty-sub { font-size: 14px; color: #94a3b8; }
+
+//         /* Results label */
+//         .results-label { font-size: 13px; color: #94a3b8; font-weight: 600; margin-bottom: 14px; }
+//         .results-label strong { color: #374151; }
+
+//         /* Alert */
+//         .loc-alert { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 11px 16px; font-size: 13px; color: #92400e; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+
+//         @media (max-width: 900px) {
+//           .content-grid { grid-template-columns: 1fr; }
+//           .hero-title { font-size: 24px; }
+//         }
+//       `}</style>
+
+//       {/* ── Navbar ── */}
+//       <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
+//         <div className="navbar-inner">
+//           <div className="logo">
+//             <div className="logo-icon">
+//               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+//                 <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
+//               </svg>
+//             </div>
+//             <span className="logo-text">Hyper<span>local</span></span>
+//           </div>
+
+//           {userLocation && (
+//             <div className="location-chip">
+//               <span className="dot" />
+//               Within 10 km
+//             </div>
+//           )}
+
+//           <div className="nav-search-wrap">
+//             <svg className="nav-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+//               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+//             </svg>
+//             <input
+//               className="nav-search"
+//               type="text"
+//               placeholder="Search shops, areas…"
+//               value={search}
+//               onChange={e => setSearch(e.target.value)}
+//               ref={searchRef}
+//             />
+//           </div>
+
+//           <div className="nav-right">
+//             <button className="nav-btn nav-btn-ghost" onClick={() => navigate('/customer/orders')}>
+//               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+//                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" />
+//               </svg>
+//               My Orders
+//             </button>
+//             <div className="nav-btn nav-btn-user" style={{ gap: 8 }}>
+//               <div className="user-avatar">{user?.name?.[0]?.toUpperCase()}</div>
+//               <span style={{ fontSize: 13, fontWeight: 700 }}>{user?.name?.split(' ')[0]}</span>
+//             </div>
+//             <button className="nav-btn nav-btn-logout" onClick={() => { logout(); navigate('/login') }}>
+//               Logout
+//             </button>
+//           </div>
 //         </div>
 //       </nav>
 
-//       <div className="max-w-6xl mx-auto p-6">
-
-//         {/* Header */}
-//         <div className="flex justify-between items-center mb-4">
-//           <h2 className="text-2xl font-bold text-gray-800">Nearby Shops</h2>
-//           <div className="flex gap-2">
-//             <button
-//               onClick={() => setView('grid')}
-//               className={`px-4 py-1 rounded text-sm font-medium transition ${view === 'grid'
-//                 ? 'bg-blue-600 text-white'
-//                 : 'bg-white text-gray-600 hover:bg-gray-100'
-//                 }`}
-//             >
-//               Grid
-//             </button>
-//             <button
-//               onClick={() => setView('map')}
-//               className={`px-4 py-1 rounded text-sm font-medium transition ${view === 'map'
-//                 ? 'bg-blue-600 text-white'
-//                 : 'bg-white text-gray-600 hover:bg-gray-100'
-//                 }`}
-//             >
-//               Map
-//             </button>
+//       {/* ── Hero strip ── */}
+//       <div className="hero-strip">
+//         <div className="hero-inner">
+//           <h1 className="hero-title">
+//             Shops near <span>you</span> 📍
+//           </h1>
+//           <p className="hero-sub">
+//             {userLocation ? 'Showing local shops within 10 km of your location' : 'Discover the best local vendors in your neighbourhood'}
+//           </p>
+//           <div className="stats-row">
+//             <div className="stat-chip">
+//               <div className="ic" style={{ background: '#fff7ed' }}>🏪</div>
+//               <strong>{shops.length}</strong> shops nearby
+//             </div>
+//             <div className="stat-chip">
+//               <div className="ic" style={{ background: '#f0fdf4' }}>✅</div>
+//               <strong>{shops.filter(s => s.isOpen).length}</strong> open now
+//             </div>
+//             {CATEGORIES.map(cat => {
+//               const count = shops.filter(s => s.category === cat.id).length
+//               if (!count) return null
+//               return (
+//                 <div key={cat.id} className="stat-chip" style={{ cursor: 'pointer' }} onClick={() => setCategory(cat.id === category ? '' : cat.id)}>
+//                   <div className="ic" style={{ background: cat.bg }}>{cat.emoji}</div>
+//                   {count} {cat.label.toLowerCase()}
+//                 </div>
+//               )
+//             })}
 //           </div>
 //         </div>
+//       </div>
 
-//         {/* Location status */}
-//         {locationError && (
-//           <div className="bg-yellow-100 text-yellow-700 p-3 rounded mb-4 text-sm">
-//             Location access denied. Showing all shops. Enable location for nearby results.
-//           </div>
-//         )}
-
-//         {/* Search and Filter */}
-//         <div className="flex gap-3 mb-4">
-//           <input
-//             type="text"
-//             placeholder="Search shops by name or address..."
-//             value={search}
-//             onChange={(e) => setSearch(e.target.value)}
-//             className="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500"
-//           />
-//           <select
-//             value={category}
-//             onChange={(e) => setCategory(e.target.value)}
-//             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+//       {/* ── Filter bar ── */}
+//       <div className="filter-bar">
+//         <div className="filter-bar-inner">
+//           <button
+//             className={`cat-pill${category === '' ? ' active' : ''}`}
+//             style={category === '' ? { background: '#0f172a', borderColor: '#0f172a' } : {}}
+//             onClick={() => setCategory('')}
 //           >
-//             <option value="">All Categories</option>
-//             <option value="grocery">Grocery</option>
-//             <option value="food">Food</option>
-//             <option value="fruit">Fruit</option>
-//             <option value="bakery">Bakery</option>
-//             <option value="dairy">Dairy</option>
-//             <option value="stationary">Stationary</option>
-//             <option value="other">Other</option>
-//           </select>
+//             All Shops
+//           </button>
+//           {CATEGORIES.map(cat => (
+//             <button
+//               key={cat.id}
+//               className={`cat-pill${category === cat.id ? ' active' : ''}`}
+//               style={category === cat.id ? { background: cat.color, borderColor: cat.color } : {}}
+//               onClick={() => setCategory(category === cat.id ? '' : cat.id)}
+//             >
+//               {cat.emoji} {cat.label}
+//             </button>
+//           ))}
 //         </div>
+//       </div>
 
-//         {/* Radius slider */}
-//         {userLocation && (
-//           <div className="flex items-center gap-3 mb-6 bg-white p-3 rounded-lg shadow">
-//             <span className="text-sm text-gray-600 whitespace-nowrap">Search radius:</span>
-//             <input
-//               type="range"
-//               min="1000"
-//               max="20000"
-//               step="1000"
-//               value={radius}
-//               onChange={(e) => setRadius(Number(e.target.value))}
-//               className="flex-1"
-//             />
-//             <span className="text-sm font-medium text-blue-600 whitespace-nowrap">
-//               {radius / 1000} km
-//             </span>
+//       {/* ── Location error ── */}
+//       {locationError && (
+//         <div style={{ maxWidth: 1340, margin: '14px auto 0', padding: '0 28px' }}>
+//           <div className="loc-alert">
+//             <span style={{ fontSize: 16 }}>⚠️</span>
+//             Location access denied. Enable it in your browser settings for nearby results.
 //           </div>
-//         )}
+//         </div>
+//       )}
 
-//         {/* MAP VIEW */}
-//         {view === 'map' && (
-//           <div className="bg-white rounded-lg shadow overflow-hidden mb-6">
-//             {userLocation ? (
-//               <MapContainer
-//                 center={[userLocation.latitude, userLocation.longitude]}
-//                 zoom={13}
-//                 style={{ height: '500px', width: '100%' }}
-//               >
-//                 <TileLayer
-//                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-//                   attribution='&copy; OpenStreetMap contributors'
-//                 />
+//       {/* ── Main content ── */}
+//       <div className="main-wrap">
+//         <div className="content-grid">
 
-//                 <RecenterMap
-//                   lat={userLocation.latitude}
-//                   lng={userLocation.longitude}
-//                 />
+//           {/* Map */}
+//           <MapPanel
+//             userLocation={userLocation}
+//             filteredShops={filteredShops}
+//             mapExpanded={mapExpanded}
+//             setMapExpanded={setMapExpanded}
+//             navigate={navigate}
+//           />
 
-//                 {/* User location marker */}
-//                 <Marker
-//                   position={[userLocation.latitude, userLocation.longitude]}
-//                   icon={userIcon}
-//                 >
-//                   <Popup>You are here</Popup>
-//                 </Marker>
-
-//                 {/* Radius circle */}
-//                 <Circle
-//                   center={[userLocation.latitude, userLocation.longitude]}
-//                   radius={radius}
-//                   pathOptions={{
-//                     color: 'blue',
-//                     fillColor: 'blue',
-//                     fillOpacity: 0.05
-//                   }}
-//                 />
-
-//                 {/* Shop markers */}
-//                 {filteredShops.map(shop => (
-//                   shop.location?.coordinates && (
-//                     <Marker
-//                       key={shop._id}
-//                       position={[
-//                         shop.location.coordinates[1],
-//                         shop.location.coordinates[0]
-//                       ]}
-//                       icon={shopIcon}
-//                     >
-//                       <Popup>
-//                         <div className="p-1">
-//                           <p className="font-bold text-gray-800">{shop.name}</p>
-//                           <p className="text-sm text-blue-600 capitalize">{shop.category}</p>
-//                           <p className="text-xs text-gray-500 mb-2">
-//                             {shop.location?.address || shop.location.address}
-//                           </p>
-//                           <button
-//                             onClick={() => navigate(`/shop/${shop._id}`)}
-//                             className="bg-blue-600 text-white px-3 py-1 rounded text-xs w-full"
-//                           >
-//                             View Shop
-//                           </button>
-//                         </div>
-//                       </Popup>
-//                     </Marker>
-//                   )
-//                 ))}
-//               </MapContainer>
-//             ) : (
-//               <div className="h-64 flex items-center justify-center text-gray-500">
-//                 Enable location to see map
-//               </div>
-//             )}
-//           </div>
-//         )}
-
-//         {/* GRID VIEW */}
-//         {view === 'grid' && (
-//           <>
+//           {/* Shops list */}
+//           <div>
 //             {loading ? (
-//               <div className="text-center text-gray-500 py-12">Loading shops...</div>
-//             ) : filteredShops.length === 0 ? (
-//               <div className="text-center text-gray-500 py-12">
-//                 No shops found in this area. Try increasing the radius.
-//               </div>
-//             ) : (
-//               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-//                 {filteredShops.map(shop => (
-//                   <div
-//                     key={shop._id}
-//                     onClick={() => navigate(`/shop/${shop._id}`)}
-//                     className="bg-white rounded-lg shadow p-5 cursor-pointer hover:shadow-md transition"
-//                   >
-//                     <div className="flex justify-between items-start mb-2">
-//                       <h3 className="font-bold text-gray-800 text-lg">{shop.name}</h3>
-//                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${shop.isOpen
-//                         ? 'bg-green-100 text-green-700'
-//                         : 'bg-red-100 text-red-600'
-//                         }`}>
-//                         {shop.isOpen ? 'Open' : 'Closed'}
-//                       </span>
-//                     </div>
-//                     <p className="text-sm text-blue-600 font-medium capitalize mb-1">
-//                       {shop.category}
-//                     </p>
-//                     <p className="text-sm text-gray-500 mb-1">
-//                       {shop.location?.address || shop.location}
-//                     </p>
-//                     <p className="text-sm text-gray-600 line-clamp-2">
-//                       {shop.description}
-//                     </p>
-//                     <p className="text-sm text-gray-500 mt-2">{shop.contact}</p>
-//                   </div>
+//               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+//                 {[1, 2, 3, 4, 5].map(i => (
+//                   <div key={i} className="skeleton" style={{ height: 148 }} />
 //                 ))}
 //               </div>
+//             ) : filteredShops.length === 0 ? (
+//               <div className="empty-state">
+//                 <div className="empty-icon">🔍</div>
+//                 <p className="empty-title">No shops found</p>
+//                 <p className="empty-sub">Try a different category or search term</p>
+//               </div>
+//             ) : (
+//               <>
+//                 <p className="results-label">
+//                   Showing <strong>{filteredShops.length}</strong> shop{filteredShops.length !== 1 ? 's' : ''}
+//                   {category ? ` · ${getCat(category).emoji} ${getCat(category).label}` : ''} &nbsp;·&nbsp;
+//                   <span style={{ color: '#22c55e' }}>{openCount} open now</span>
+//                 </p>
+//                 <div className="shops-list" style={{ display: 'flex', flexDirection: 'column', gap: 14, maxHeight: 'calc(100vh - 210px)', overflowY: 'auto', paddingRight: 4, paddingBottom: 8 }}>
+//                   {filteredShops.map(shop => (
+//                     <ShopCard key={shop._id} shop={shop} navigate={navigate} />
+//                   ))}
+//                 </div>
+//               </>
 //             )}
-//           </>
-//         )}
+//           </div>
+
+//         </div>
 //       </div>
 //     </div>
 //   )
 // }
 
-// export default Marketplace
 
 
-
-
-
-
-
-
-
-import { useState, useEffect, useRef } from 'react'
-import { createPortal } from 'react-dom'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
@@ -365,163 +907,28 @@ const RecenterMap = ({ lat, lng }) => {
   return null
 }
 
-const MapResizer = ({ expanded }) => {
-  const map = useMap()
-  useEffect(() => {
-    const t = setTimeout(() => map.invalidateSize(), 300)
-    return () => clearTimeout(t)
-  }, [expanded])
-  return null
-}
-
 const CATEGORIES = [
-  { id: 'grocery', label: 'Grocery', emoji: '🛒', color: '#22c55e', bg: '#f0fdf4' },
-  { id: 'food', label: 'Food', emoji: '🍱', color: '#f97316', bg: '#fff7ed' },
-  { id: 'fruit', label: 'Fruits', emoji: '🍎', color: '#ef4444', bg: '#fef2f2' },
-  { id: 'bakery', label: 'Bakery', emoji: '🥐', color: '#f59e0b', bg: '#fffbeb' },
-  { id: 'dairy', label: 'Dairy', emoji: '🥛', color: '#3b82f6', bg: '#eff6ff' },
-  { id: 'stationary', label: 'Stationery', emoji: '📚', color: '#8b5cf6', bg: '#f5f3ff' },
-  { id: 'other', label: 'Other', emoji: '🏪', color: '#64748b', bg: '#f8fafc' },
+  { id: '', label: 'All' },
+  { id: 'grocery', label: 'Grocery', emoji: '🛒' },
+  { id: 'food', label: 'Food', emoji: '🍱' },
+  { id: 'fruit', label: 'Fruits', emoji: '🍎' },
+  { id: 'bakery', label: 'Bakery', emoji: '🥐' },
+  { id: 'dairy', label: 'Dairy', emoji: '🥛' },
+  { id: 'stationary', label: 'Stationery', emoji: '📚' },
+  { id: 'other', label: 'Other', emoji: '🏪' },
 ]
 
-const getCat = id => CATEGORIES.find(c => c.id === id) || CATEGORIES[6]
-
-const MapPanel = ({ userLocation, filteredShops, mapExpanded, setMapExpanded, navigate }) => {
-  const mapEl = (
-    <MapContainer
-      center={userLocation ? [userLocation.latitude, userLocation.longitude] : [20.5937, 78.9629]}
-      zoom={13}
-      style={{ height: '100%', width: '100%' }}
-    >
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' />
-      {userLocation && <RecenterMap lat={userLocation.latitude} lng={userLocation.longitude} />}
-      <MapResizer expanded={mapExpanded} />
-      {userLocation && (
-        <>
-          <Marker position={[userLocation.latitude, userLocation.longitude]} icon={userIcon}>
-            <Popup>📍 You are here</Popup>
-          </Marker>
-          <Circle
-            center={[userLocation.latitude, userLocation.longitude]}
-            radius={10000}
-            pathOptions={{ color: '#f97316', fillColor: '#f97316', fillOpacity: 0.04, weight: 1.5 }}
-          />
-        </>
-      )}
-      {filteredShops.map(shop => shop.location?.coordinates && (
-        <Marker key={shop._id} position={[shop.location.coordinates[1], shop.location.coordinates[0]]} icon={shopIcon}>
-          <Popup>
-            <div style={{ minWidth: 160, padding: 6, fontFamily: 'Outfit, sans-serif' }}>
-              <p style={{ fontWeight: 700, fontSize: 14, marginBottom: 3 }}>{shop.name}</p>
-              <p style={{ fontSize: 12, color: getCat(shop.category).color, marginBottom: 3 }}>
-                {getCat(shop.category).emoji} {shop.category}
-              </p>
-              <p style={{ fontSize: 12, color: '#64748b', marginBottom: 10 }}>{shop.location?.address}</p>
-              <button
-                onClick={() => navigate(`/shop/${shop._id}`)}
-                style={{ background: '#f97316', color: 'white', border: 'none', padding: '7px 14px', borderRadius: 8, fontSize: 12, cursor: 'pointer', width: '100%', fontWeight: 600 }}
-              >
-                View Shop →
-              </button>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
-  )
-
-  const header = (
-    <div style={{ background: '#fff', padding: '12px 16px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 8 }}>
-      <div style={{ width: 28, height: 28, borderRadius: 8, background: '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>🗺️</div>
-      <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>Live Map</span>
-      <span style={{ fontSize: 12, color: '#94a3b8', marginLeft: 'auto', marginRight: 10, fontFamily: 'Outfit, sans-serif' }}>
-        {filteredShops.filter(s => s.location?.coordinates).length} shops
-      </span>
-      <button
-        onClick={() => setMapExpanded(v => !v)}
-        style={{ background: mapExpanded ? '#f1f5f9' : '#fff7ed', border: 'none', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 700, color: mapExpanded ? '#374151' : '#f97316', fontFamily: 'Outfit, sans-serif' }}
-      >
-        {mapExpanded ? '✕ Close' : '⛶ Expand'}
-      </button>
-    </div>
-  )
-
-  if (mapExpanded) return createPortal(
-    <>
-      <div onClick={() => setMapExpanded(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 998 }} />
-      <div style={{ position: 'fixed', inset: 0, zIndex: 999, display: 'flex', flexDirection: 'column', background: '#fff' }}>
-        {header}
-        <div style={{ flex: 1 }}>{mapEl}</div>
-      </div>
-    </>,
-    document.body
-  )
-
-  return (
-    <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid #f1f5f9', boxShadow: '0 2px 16px rgba(0,0,0,0.06)', position: 'sticky', top: 80 }}>
-      {header}
-      <div style={{ height: 420 }}>
-        {userLocation ? mapEl : (
-          <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, background: '#f8fafc' }}>
-            <span style={{ fontSize: 36 }}>📍</span>
-            <p style={{ fontSize: 13, color: '#94a3b8', fontFamily: 'Outfit, sans-serif' }}>Enable location to see map</p>
-          </div>
-        )}
-      </div>
-    </div>
-  )
+const catColor = {
+  grocery: '#22c55e', food: '#f97316', fruit: '#ef4444',
+  bakery: '#f59e0b', dairy: '#3b82f6', stationary: '#8b5cf6', other: '#64748b'
 }
-
-const ShopCard = ({ shop, navigate }) => {
-  const cat = getCat(shop.category)
-  return (
-    <div
-      className="shop-card"
-      onClick={() => navigate(`/shop/${shop._id}`)}
-      style={{ '--cat-color': cat.color, '--cat-bg': cat.bg }}
-    >
-      {/* Top color bar */}
-      <div className="card-bar" />
-
-      <div style={{ padding: '18px 18px 16px' }}>
-        {/* Header row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div className="shop-icon-wrap">
-              <span style={{ fontSize: 22 }}>{cat.emoji}</span>
-            </div>
-            <div>
-              <h3 className="shop-name">{shop.name}</h3>
-              <span className="shop-cat-badge">{cat.emoji} {cat.label}</span>
-            </div>
-          </div>
-          <span className={shop.isOpen ? 'badge-open' : 'badge-closed'}>
-            <span className="badge-dot" />
-            {shop.isOpen ? 'Open' : 'Closed'}
-          </span>
-        </div>
-
-        {/* Description */}
-        <p className="shop-desc">{shop.description}</p>
-
-        {/* Footer */}
-        <div className="card-footer">
-          <span className="shop-addr">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
-            </svg>
-            {shop.location?.address || 'Location not set'}
-          </span>
-          <span className="view-link">
-            View
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-            </svg>
-          </span>
-        </div>
-      </div>
-    </div>
-  )
+const catBg = {
+  grocery: '#f0fdf4', food: '#fff7ed', fruit: '#fef2f2',
+  bakery: '#fffbeb', dairy: '#eff6ff', stationary: '#f5f3ff', other: '#f8fafc'
+}
+const catEmoji = {
+  grocery: '🛒', food: '🍱', fruit: '🍎',
+  bakery: '🥐', dairy: '🥛', stationary: '📚', other: '🏪'
 }
 
 export default function Marketplace() {
@@ -533,20 +940,7 @@ export default function Marketplace() {
   const [category, setCategory] = useState('')
   const [userLocation, setUserLocation] = useState(null)
   const [locationError, setLocationError] = useState(false)
-  const [mapExpanded, setMapExpanded] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const searchRef = useRef(null)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  useEffect(() => {
-    document.body.style.overflow = mapExpanded ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [mapExpanded])
+  const [activeShop, setActiveShop] = useState(null)
 
   useEffect(() => { getUserLocation() }, [])
   useEffect(() => { fetchShops() }, [userLocation])
@@ -562,7 +956,11 @@ export default function Marketplace() {
     try {
       setLoading(true)
       const params = {}
-      if (userLocation) { params.latitude = userLocation.latitude; params.longitude = userLocation.longitude; params.radius = 10000 }
+      if (userLocation) {
+        params.latitude = userLocation.latitude
+        params.longitude = userLocation.longitude
+        params.radius = 10000
+      }
       const res = await axios.get('/api/shop/all', { params })
       setShops(res.data.shops)
     } catch (err) { console.error(err) }
@@ -570,303 +968,309 @@ export default function Marketplace() {
   }
 
   const filteredShops = shops.filter(shop => {
-    const matchesSearch = shop.name.toLowerCase().includes(search.toLowerCase()) || (shop.location?.address || '').toLowerCase().includes(search.toLowerCase())
-    const matchesCategory = category === '' || shop.category === category
-    return matchesSearch && matchesCategory
+    const matchSearch = shop.name.toLowerCase().includes(search.toLowerCase()) ||
+      (shop.location?.address || '').toLowerCase().includes(search.toLowerCase())
+    const matchCat = category === '' || shop.category === category
+    return matchSearch && matchCat
   })
 
-  const openCount = filteredShops.filter(s => s.isOpen).length
-
   return (
-    <div style={{ minHeight: '100vh', background: '#fafafa', fontFamily: "'Outfit', sans-serif" }}>
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', fontFamily: "'DM Sans', sans-serif", overflow: 'hidden' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* ── Navbar ── */
-        .navbar {
-          position: sticky; top: 0; z-index: 100;
-          background: #fff;
-          border-bottom: 1px solid #f1f5f9;
-          transition: box-shadow 0.2s;
-        }
-        .navbar.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
-        .navbar-inner { max-width: 1340px; margin: 0 auto; padding: 0 28px; height: 66px; display: flex; align-items: center; gap: 24px; }
-        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #f97316, #ef4444); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .logo-text { font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
-        .logo-text span { color: #f97316; }
+        /* Topbar */
+        .topbar { height: 60px; background: #fff; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; padding: 0 20px; gap: 16px; flex-shrink: 0; z-index: 50; }
+        .logo { font-size: 18px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px; }
+        .logo span { color: #3b82f6; }
 
-        /* Location chip */
-        .location-chip { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; border: 1.5px solid #f1f5f9; background: #fafafa; cursor: pointer; font-size: 13px; font-weight: 600; color: #374151; transition: all 0.15s; }
-        .location-chip:hover { border-color: #f97316; color: #f97316; }
-        .location-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+        /* Category tabs */
+        .cat-tabs { display: flex; gap: 4px; align-items: center; }
+        .cat-tab { padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: #64748b; font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap; }
+        .cat-tab:hover { background: #f8fafc; color: #374151; }
+        .cat-tab.active { background: #3b82f6; color: #fff; font-weight: 600; }
 
-        /* Nav search */
-        .nav-search-wrap { flex: 1; max-width: 480px; position: relative; }
-        .nav-search { width: 100%; height: 42px; padding: 0 16px 0 42px; border-radius: 12px; border: 1.5px solid #f1f5f9; background: #f8fafc; font-size: 14px; font-family: 'Outfit', sans-serif; color: #0f172a; outline: none; transition: all 0.15s; }
-        .nav-search:focus { border-color: #f97316; background: #fff; box-shadow: 0 0 0 3px rgba(249,115,22,0.1); }
-        .nav-search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
-        .nav-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+        /* Search */
+        .search-wrap { position: relative; }
+        .search-input { height: 36px; padding: 0 14px 0 36px; border-radius: 8px; border: 1.5px solid #e2e8f0; font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none; width: 220px; background: #f8fafc; color: #0f172a; transition: all 0.15s; }
+        .search-input:focus { border-color: #3b82f6; background: #fff; width: 260px; }
+        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
 
-        /* Nav buttons */
-        .nav-btn { display: flex; align-items: center; gap: 7px; padding: 8px 16px; border-radius: 10px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; font-family: 'Outfit', sans-serif; transition: all 0.15s; }
-        .nav-btn-ghost { background: transparent; color: #374151; }
-        .nav-btn-ghost:hover { background: #f8fafc; }
-        .nav-btn-user { background: #fff7ed; color: #f97316; }
-        .nav-btn-logout { background: #fef2f2; color: #ef4444; }
-        .nav-btn-logout:hover { background: #fee2e2; }
-        .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #f97316, #ef4444); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: white; }
+        /* Layout */
+        .body-wrap { flex: 1; display: grid; grid-template-columns: 380px 1fr; overflow: hidden; }
 
-        /* ── Hero strip ── */
-        .hero-strip { background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 50%, #fdf2f8 100%); border-bottom: 1px solid #f1f5f9; padding: 28px 0 24px; }
-        .hero-inner { max-width: 1340px; margin: 0 auto; padding: 0 28px; }
-        .hero-title { font-size: 32px; font-weight: 900; color: #0f172a; letter-spacing: -1px; line-height: 1.1; margin-bottom: 6px; }
-        .hero-title span { color: #f97316; }
-        .hero-sub { font-size: 15px; color: #64748b; font-weight: 500; }
+        /* Left panel */
+        .left-panel { display: flex; flex-direction: column; border-right: 1px solid #f1f5f9; background: #fff; overflow: hidden; }
+        .left-header { padding: 16px 20px 12px; border-bottom: 1px solid #f8fafc; flex-shrink: 0; }
+        .left-title { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+        .left-sub { font-size: 13px; color: #94a3b8; }
+        .shops-scroll { flex: 1; overflow-y: auto; padding: 12px 12px; display: flex; flex-direction: column; gap: 10px; }
+        .shops-scroll::-webkit-scrollbar { width: 3px; }
+        .shops-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
 
-        /* Stats row */
-        .stats-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .stat-chip { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #f1f5f9; border-radius: 100px; padding: 7px 16px; font-size: 13px; font-weight: 600; color: #374151; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-        .stat-chip .ic { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
-
-        /* ── Main layout ── */
-        .main-wrap { max-width: 1340px; margin: 0 auto; padding: 28px 28px; }
-        .content-grid { display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; }
-
-        /* ── Filter bar ── */
-        .filter-bar { background: #fff; border-bottom: 1px solid #f1f5f9; position: sticky; top: 66px; z-index: 50; }
-        .filter-bar-inner { max-width: 1340px; margin: 0 auto; padding: 12px 28px; display: flex; gap: 8px; overflow-x: auto; }
-        .filter-bar-inner::-webkit-scrollbar { display: none; }
-
-        .cat-pill {
-          display: inline-flex; align-items: center; gap: 6px;
-          padding: 8px 16px; border-radius: 100px;
-          font-size: 13px; font-weight: 600; font-family: 'Outfit', sans-serif;
-          cursor: pointer; white-space: nowrap;
-          border: 1.5px solid #e8ecf0;
-          background: #fff; color: #64748b;
-          transition: all 0.15s; flex-shrink: 0;
-        }
-        .cat-pill:hover { border-color: #cbd5e1; transform: translateY(-1px); }
-        .cat-pill.active { color: #fff; border-color: transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-1px); }
-
-        /* ── Shop cards ── */
-        .shop-card {
-          background: #fff;
-          border-radius: 16px;
-          overflow: hidden;
-          cursor: pointer;
-          border: 1px solid #f1f5f9;
-          position: relative;
-          transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
-        }
-        .shop-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); border-color: transparent; }
-        .card-bar { height: 4px; background: var(--cat-color); }
-        .shop-icon-wrap { width: 46px; height: 46px; border-radius: 12px; background: var(--cat-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .shop-name { font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 3px; letter-spacing: -0.2px; }
-        .shop-cat-badge { font-size: 11px; font-weight: 700; color: var(--cat-color); text-transform: uppercase; letter-spacing: 0.5px; }
-        .shop-desc { font-size: 13px; color: #64748b; line-height: 1.55; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #f8fafc; }
-        .shop-addr { font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 4px; flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .view-link { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #f97316; flex-shrink: 0; margin-left: 8px; }
-        .shop-card:hover .view-link { gap: 6px; }
-
-        /* Badges */
-        .badge-open, .badge-closed { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; flex-shrink: 0; }
-        .badge-open { background: #f0fdf4; color: #16a34a; }
-        .badge-closed { background: #fef2f2; color: #ef4444; }
-        .badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-        .badge-open .badge-dot { background: #22c55e; animation: pulse-green 2s infinite; }
-        .badge-closed .badge-dot { background: #ef4444; }
-        @keyframes pulse-green { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+        /* Shop card */
+        .shop-card { display: flex; align-items: center; gap: 14px; padding: 14px 14px; border-radius: 12px; cursor: pointer; border: 1.5px solid #f1f5f9; background: #fff; transition: all 0.18s; position: relative; }
+        .shop-card:hover { border-color: #e2e8f0; box-shadow: 0 4px 16px rgba(0,0,0,0.07); transform: translateY(-1px); }
+        .shop-card.active { border-color: #3b82f6; background: #eff6ff; box-shadow: 0 4px 16px rgba(59,130,246,0.12); }
+        .shop-thumb { width: 58px; height: 58px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+        .shop-info { flex: 1; min-width: 0; }
+        .shop-name { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .shop-cat { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .shop-addr { font-size: 12px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 3px; }
+        .shop-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+        .badge { padding: 3px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; }
+        .badge-open { background: #dcfce7; color: #16a34a; }
+        .badge-closed { background: #fee2e2; color: #ef4444; }
+        .arrow-btn { width: 28px; height: 28px; border-radius: 8px; background: #f8fafc; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #94a3b8; transition: all 0.15s; }
+        .shop-card:hover .arrow-btn, .shop-card.active .arrow-btn { background: #3b82f6; color: #fff; }
 
         /* Skeleton */
-        .skeleton { background: linear-gradient(90deg, #f8fafc 25%, #f1f5f9 50%, #f8fafc 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 16px; }
+        .skeleton { background: linear-gradient(90deg, #f8fafc 25%, #f1f5f9 50%, #f8fafc 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 12px; }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-        /* Scroll */
-        .shops-list::-webkit-scrollbar { width: 4px; }
-        .shops-list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
-
         /* Empty */
-        .empty-state { text-align: center; padding: 60px 20px; }
-        .empty-icon { font-size: 52px; margin-bottom: 14px; }
-        .empty-title { font-size: 18px; font-weight: 800; color: #374151; margin-bottom: 6px; }
-        .empty-sub { font-size: 14px; color: #94a3b8; }
+        .empty { text-align: center; padding: 48px 20px; color: #94a3b8; }
+        .empty-icon { font-size: 40px; margin-bottom: 10px; }
+        .empty-text { font-size: 14px; font-weight: 600; color: #64748b; margin-bottom: 4px; }
+        .empty-sub { font-size: 13px; }
 
-        /* Results label */
-        .results-label { font-size: 13px; color: #94a3b8; font-weight: 600; margin-bottom: 14px; }
-        .results-label strong { color: #374151; }
+        /* Right map */
+        .map-panel { position: relative; overflow: hidden; }
+        .map-overlay-top { position: absolute; top: 16px; left: 16px; right: 16px; z-index: 500; pointer-events: none; display: flex; justify-content: space-between; align-items: flex-start; }
+        .map-badge { background: #fff; border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: 600; color: #374151; box-shadow: 0 2px 12px rgba(0,0,0,0.1); pointer-events: auto; display: flex; align-items: center; gap: 6px; }
+        .loc-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse-dot 2s infinite; }
+        @keyframes pulse-dot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.6} }
 
-        /* Alert */
-        .loc-alert { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 11px 16px; font-size: 13px; color: #92400e; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+        /* Nav right */
+        .nav-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+        .nav-avatar { width: 32px; height: 32px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; cursor: pointer; }
+        .nav-icon-btn { width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid #f1f5f9; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748b; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+        .nav-icon-btn:hover { border-color: #e2e8f0; color: #374151; background: #f8fafc; }
+        .logout-btn { padding: 6px 14px; border-radius: 8px; border: 1.5px solid #fee2e2; background: #fff; color: #ef4444; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+        .logout-btn:hover { background: #fef2f2; }
 
-        @media (max-width: 900px) {
-          .content-grid { grid-template-columns: 1fr; }
-          .hero-title { font-size: 24px; }
-        }
+        /* Results count */
+        .results-count { font-size: 12px; color: #94a3b8; padding: 4px 20px 8px; font-weight: 500; }
       `}</style>
 
-      {/* ── Navbar ── */}
-      <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
-        <div className="navbar-inner">
-          <div className="logo">
-            <div className="logo-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
-            </div>
-            <span className="logo-text">Hyper<span>local</span></span>
-          </div>
+      {/* ── Topbar ── */}
+      <div className="topbar">
+        {/* Logo */}
+        <div className="logo">Hyper<span>local</span></div>
 
-          {userLocation && (
-            <div className="location-chip">
-              <span className="dot" />
-              Within 10 km
-            </div>
-          )}
+        {/* Divider */}
+        <div style={{ width: 1, height: 20, background: '#f1f5f9' }} />
 
-          <div className="nav-search-wrap">
-            <svg className="nav-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              className="nav-search"
-              type="text"
-              placeholder="Search shops, areas…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              ref={searchRef}
-            />
-          </div>
-
-          <div className="nav-right">
-            <button className="nav-btn nav-btn-ghost" onClick={() => navigate('/customer/orders')}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" />
-              </svg>
-              My Orders
-            </button>
-            <div className="nav-btn nav-btn-user" style={{ gap: 8 }}>
-              <div className="user-avatar">{user?.name?.[0]?.toUpperCase()}</div>
-              <span style={{ fontSize: 13, fontWeight: 700 }}>{user?.name?.split(' ')[0]}</span>
-            </div>
-            <button className="nav-btn nav-btn-logout" onClick={() => { logout(); navigate('/login') }}>
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* ── Hero strip ── */}
-      <div className="hero-strip">
-        <div className="hero-inner">
-          <h1 className="hero-title">
-            Shops near <span>you</span> 📍
-          </h1>
-          <p className="hero-sub">
-            {userLocation ? 'Showing local shops within 10 km of your location' : 'Discover the best local vendors in your neighbourhood'}
-          </p>
-          <div className="stats-row">
-            <div className="stat-chip">
-              <div className="ic" style={{ background: '#fff7ed' }}>🏪</div>
-              <strong>{shops.length}</strong> shops nearby
-            </div>
-            <div className="stat-chip">
-              <div className="ic" style={{ background: '#f0fdf4' }}>✅</div>
-              <strong>{shops.filter(s => s.isOpen).length}</strong> open now
-            </div>
-            {CATEGORIES.map(cat => {
-              const count = shops.filter(s => s.category === cat.id).length
-              if (!count) return null
-              return (
-                <div key={cat.id} className="stat-chip" style={{ cursor: 'pointer' }} onClick={() => setCategory(cat.id === category ? '' : cat.id)}>
-                  <div className="ic" style={{ background: cat.bg }}>{cat.emoji}</div>
-                  {count} {cat.label.toLowerCase()}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Filter bar ── */}
-      <div className="filter-bar">
-        <div className="filter-bar-inner">
-          <button
-            className={`cat-pill${category === '' ? ' active' : ''}`}
-            style={category === '' ? { background: '#0f172a', borderColor: '#0f172a' } : {}}
-            onClick={() => setCategory('')}
-          >
-            All Shops
-          </button>
+        {/* Category tabs */}
+        <div className="cat-tabs" style={{ overflowX: 'auto' }}>
           {CATEGORIES.map(cat => (
             <button
               key={cat.id}
-              className={`cat-pill${category === cat.id ? ' active' : ''}`}
-              style={category === cat.id ? { background: cat.color, borderColor: cat.color } : {}}
-              onClick={() => setCategory(category === cat.id ? '' : cat.id)}
+              className={`cat-tab ${category === cat.id ? 'active' : ''}`}
+              onClick={() => setCategory(cat.id)}
             >
-              {cat.emoji} {cat.label}
+              {cat.emoji ? `${cat.emoji} ` : ''}{cat.label}
             </button>
           ))}
         </div>
+
+        {/* Nav right */}
+        <div className="nav-right">
+          {/* Search */}
+          <div className="search-wrap">
+            <svg className="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              className="search-input"
+              type="text"
+              placeholder="Search shops…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+
+          {/* Orders */}
+          <button className="nav-icon-btn" onClick={() => navigate('/customer/orders')} title="My Orders">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" />
+            </svg>
+          </button>
+
+          {/* Avatar */}
+          <div className="nav-avatar" title={user?.name}>
+            {user?.name?.[0]?.toUpperCase()}
+          </div>
+
+          {/* Logout */}
+          <button className="logout-btn" onClick={() => { logout(); navigate('/login') }}>
+            Logout
+          </button>
+        </div>
       </div>
 
-      {/* ── Location error ── */}
-      {locationError && (
-        <div style={{ maxWidth: 1340, margin: '14px auto 0', padding: '0 28px' }}>
-          <div className="loc-alert">
-            <span style={{ fontSize: 16 }}>⚠️</span>
-            Location access denied. Enable it in your browser settings for nearby results.
+      {/* ── Body ── */}
+      <div className="body-wrap">
+
+        {/* ── Left panel ── */}
+        <div className="left-panel">
+          <div className="left-header">
+            <h2 className="left-title">
+              {category ? `${catEmoji[category]} ${CATEGORIES.find(c => c.id === category)?.label}` : 'Nearby Shops'}
+            </h2>
+            <p className="left-sub">
+              {userLocation ? 'Within 10 km of your location' : 'All available shops'}
+            </p>
           </div>
-        </div>
-      )}
 
-      {/* ── Main content ── */}
-      <div className="main-wrap">
-        <div className="content-grid">
+          {locationError && (
+            <div style={{ margin: '10px 12px 0', padding: '10px 14px', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 10, fontSize: 12, color: '#92400e', fontWeight: 500 }}>
+              ⚠️ Enable location for nearby results
+            </div>
+          )}
 
-          {/* Map */}
-          <MapPanel
-            userLocation={userLocation}
-            filteredShops={filteredShops}
-            mapExpanded={mapExpanded}
-            setMapExpanded={setMapExpanded}
-            navigate={navigate}
-          />
+          {!loading && filteredShops.length > 0 && (
+            <div className="results-count">
+              {filteredShops.length} result{filteredShops.length !== 1 ? 's' : ''} &nbsp;·&nbsp;
+              <span style={{ color: '#22c55e' }}>{filteredShops.filter(s => s.isOpen).length} open</span>
+            </div>
+          )}
 
-          {/* Shops list */}
-          <div>
+          <div className="shops-scroll">
             {loading ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                {[1, 2, 3, 4, 5].map(i => (
-                  <div key={i} className="skeleton" style={{ height: 148 }} />
-                ))}
-              </div>
+              [1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="skeleton" style={{ height: 86 }} />
+              ))
             ) : filteredShops.length === 0 ? (
-              <div className="empty-state">
+              <div className="empty">
                 <div className="empty-icon">🔍</div>
-                <p className="empty-title">No shops found</p>
-                <p className="empty-sub">Try a different category or search term</p>
+                <p className="empty-text">No shops found</p>
+                <p className="empty-sub">Try a different category or search</p>
               </div>
             ) : (
-              <>
-                <p className="results-label">
-                  Showing <strong>{filteredShops.length}</strong> shop{filteredShops.length !== 1 ? 's' : ''}
-                  {category ? ` · ${getCat(category).emoji} ${getCat(category).label}` : ''} &nbsp;·&nbsp;
-                  <span style={{ color: '#22c55e' }}>{openCount} open now</span>
-                </p>
-                <div className="shops-list" style={{ display: 'flex', flexDirection: 'column', gap: 14, maxHeight: 'calc(100vh - 210px)', overflowY: 'auto', paddingRight: 4, paddingBottom: 8 }}>
-                  {filteredShops.map(shop => (
-                    <ShopCard key={shop._id} shop={shop} navigate={navigate} />
-                  ))}
+              filteredShops.map(shop => (
+                <div
+                  key={shop._id}
+                  className={`shop-card ${activeShop === shop._id ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveShop(shop._id)
+                    navigate(`/shop/${shop._id}`)
+                  }}
+                  onMouseEnter={() => setActiveShop(shop._id)}
+                  onMouseLeave={() => setActiveShop(null)}
+                >
+                  {/* Thumbnail */}
+                  <div
+                    className="shop-thumb"
+                    style={{ background: catBg[shop.category] || '#f8fafc' }}
+                  >
+                    {catEmoji[shop.category] || '🏪'}
+                  </div>
+
+                  {/* Info */}
+                  <div className="shop-info">
+                    <p className="shop-name">{shop.name}</p>
+                    <p className="shop-cat" style={{ color: catColor[shop.category] || '#64748b' }}>
+                      {shop.category}
+                    </p>
+                    <p className="shop-addr">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
+                      </svg>
+                      {shop.location?.address || 'Location not set'}
+                    </p>
+                  </div>
+
+                  {/* Meta */}
+                  <div className="shop-meta">
+                    <span className={shop.isOpen ? 'badge badge-open' : 'badge badge-closed'}>
+                      {shop.isOpen ? 'Open' : 'Closed'}
+                    </span>
+                    <button className="arrow-btn">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-              </>
+              ))
             )}
           </div>
+        </div>
 
+        {/* ── Right map ── */}
+        <div className="map-panel">
+
+          {/* Map overlay badges */}
+          <div className="map-overlay-top">
+            {userLocation && (
+              <div className="map-badge">
+                <span className="loc-dot" />
+                Your location
+              </div>
+            )}
+            <div className="map-badge" style={{ marginLeft: 'auto' }}>
+              🏪 {filteredShops.filter(s => s.location?.coordinates).length} on map
+            </div>
+          </div>
+
+          {userLocation ? (
+            <MapContainer
+              center={[userLocation.latitude, userLocation.longitude]}
+              zoom={13}
+              style={{ height: '100%', width: '100%' }}
+              zoomControl={false}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; OpenStreetMap contributors'
+              />
+              <RecenterMap lat={userLocation.latitude} lng={userLocation.longitude} />
+
+              {/* User marker */}
+              <Marker position={[userLocation.latitude, userLocation.longitude]} icon={userIcon}>
+                <Popup>📍 You are here</Popup>
+              </Marker>
+
+              {/* 10km circle */}
+              <Circle
+                center={[userLocation.latitude, userLocation.longitude]}
+                radius={10000}
+                pathOptions={{ color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.04, weight: 1.5 }}
+              />
+
+              {/* Shop markers */}
+              {filteredShops.map(shop => shop.location?.coordinates && (
+                <Marker
+                  key={shop._id}
+                  position={[shop.location.coordinates[1], shop.location.coordinates[0]]}
+                  icon={shopIcon}
+                >
+                  <Popup>
+                    <div style={{ minWidth: 160, padding: 6, fontFamily: 'DM Sans, sans-serif' }}>
+                      <p style={{ fontWeight: 700, fontSize: 13, marginBottom: 3, color: '#0f172a' }}>{shop.name}</p>
+                      <p style={{ fontSize: 11, color: catColor[shop.category], textTransform: 'capitalize', fontWeight: 600, marginBottom: 3 }}>
+                        {catEmoji[shop.category]} {shop.category}
+                      </p>
+                      <p style={{ fontSize: 11, color: '#64748b', marginBottom: 10 }}>{shop.location?.address}</p>
+                      <button
+                        onClick={() => navigate(`/shop/${shop._id}`)}
+                        style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '7px 14px', borderRadius: 8, fontSize: 12, cursor: 'pointer', width: '100%', fontWeight: 600 }}
+                      >
+                        View Shop →
+                      </button>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          ) : (
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', gap: 10 }}>
+              <span style={{ fontSize: 40 }}>📍</span>
+              <p style={{ fontSize: 14, color: '#94a3b8', fontWeight: 500 }}>Enable location to see the map</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
