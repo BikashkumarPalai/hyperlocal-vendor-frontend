@@ -874,66 +874,56 @@
 // }
 
 
-
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
+import {
+  ShoppingBasket, Milk, Apple, Wheat,
+  BadgeCheck, Zap, ShieldCheck,
+  ShoppingCart, UtensilsCrossed, Grape, Croissant, Package, PenLine, LayoutGrid,
+  MapPin, Search, LogOut, ClipboardList, ChevronRight, Phone, ShoppingBag
+} from 'lucide-react'
 
 const CATEGORIES = [
-  {
-    id: '', label: 'All', color: '#0f172a', bg: '#f1f5f9', icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
-    )
-  },
-  {
-    id: 'grocery', label: 'Grocery', color: '#16a34a', bg: '#f0fdf4', icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
-    )
-  },
-  {
-    id: 'food', label: 'Food', color: '#ea580c', bg: '#fff7ed', icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8h1a4 4 0 010 8h-1" /><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z" /><line x1="6" y1="1" x2="6" y2="4" /><line x1="10" y1="1" x2="10" y2="4" /><line x1="14" y1="1" x2="14" y2="4" /></svg>
-    )
-  },
-  {
-    id: 'fruit', label: 'Fruits', color: '#dc2626', bg: '#fef2f2', icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z" /><path d="M12 2c0 0-4 4-4 10s4 10 4 10" /><path d="M12 2c0 0 4 4 4 10s-4 10-4 10" /><line x1="2" y1="12" x2="22" y2="12" /></svg>
-    )
-  },
-  {
-    id: 'bakery', label: 'Bakery', color: '#d97706', bg: '#fffbeb', icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z" /></svg>
-    )
-  },
-  {
-    id: 'dairy', label: 'Dairy', color: '#2563eb', bg: '#eff6ff', icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2h8l2 6H6L8 2z" /><path d="M6 8v12a2 2 0 002 2h8a2 2 0 002-2V8" /><line x1="10" y1="13" x2="14" y2="13" /></svg>
-    )
-  },
-  {
-    id: 'stationary', label: 'Stationery', color: '#7c3aed', bg: '#f5f3ff', icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
-    )
-  },
-  {
-    id: 'other', label: 'Other', color: '#64748b', bg: '#f8fafc', icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" /></svg>
-    )
-  },
+  { id: '', label: 'All', color: '#0f172a', bg: '#f1f5f9', icon: <LayoutGrid size={22} /> },
+  { id: 'grocery', label: 'Grocery', color: '#16a34a', bg: '#f0fdf4', icon: <ShoppingCart size={22} /> },
+  { id: 'food', label: 'Food', color: '#ea580c', bg: '#fff7ed', icon: <UtensilsCrossed size={22} /> },
+  { id: 'fruit', label: 'Fruits', color: '#dc2626', bg: '#fef2f2', icon: <Apple size={22} /> },
+  { id: 'bakery', label: 'Bakery', color: '#d97706', bg: '#fffbeb', icon: <Croissant size={22} /> },
+  { id: 'dairy', label: 'Dairy', color: '#2563eb', bg: '#eff6ff', icon: <Milk size={22} /> },
+  { id: 'stationary', label: 'Stationery', color: '#7c3aed', bg: '#f5f3ff', icon: <PenLine size={22} /> },
+  { id: 'other', label: 'Other', color: '#64748b', bg: '#f8fafc', icon: <Package size={22} /> },
 ]
 
 const catColor = { grocery: '#16a34a', food: '#ea580c', fruit: '#dc2626', bakery: '#d97706', dairy: '#2563eb', stationary: '#7c3aed', other: '#64748b' }
 const catBg = { grocery: '#f0fdf4', food: '#fff7ed', fruit: '#fef2f2', bakery: '#fffbeb', dairy: '#eff6ff', stationary: '#f5f3ff', other: '#f8fafc' }
-const catIcon = {
-  grocery: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /></svg>,
-  food: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8h1a4 4 0 010 8h-1" /><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z" /></svg>,
-  fruit: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z" /></svg>,
-  bakery: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z" /></svg>,
-  dairy: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2h8l2 6H6L8 2z" /><path d="M6 8v12a2 2 0 002 2h8a2 2 0 002-2V8" /></svg>,
-  stationary: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>,
-  other: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /></svg>,
+
+const CategoryBannerIcon = ({ category }) => {
+  const props = { size: 40, strokeWidth: 1.5 }
+  const color = catColor[category] || '#64748b'
+  const bg = catBg[category] || '#f8fafc'
+  const icons = {
+    grocery: <ShoppingCart {...props} color={color} />,
+    food: <UtensilsCrossed {...props} color={color} />,
+    fruit: <Apple {...props} color={color} />,
+    bakery: <Croissant {...props} color={color} />,
+    dairy: <Milk {...props} color={color} />,
+    stationary: <PenLine {...props} color={color} />,
+    other: <Package {...props} color={color} />,
+  }
+  return (
+    <div style={{
+      width: 80, height: 80, borderRadius: 24,
+      background: bg,
+      border: `1.5px solid ${color}22`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      boxShadow: `0 4px 16px ${color}18`
+    }}>
+      {icons[category] || <Package {...props} color={color} />}
+    </div>
+  )
 }
 
 export default function Marketplace() {
@@ -1006,14 +996,12 @@ export default function Marketplace() {
         .logo { font-size: 22px; font-weight: 900; color: #0f172a; letter-spacing: -0.8px; flex-shrink: 0; }
         .logo em { color: #22c55e; font-style: normal; }
 
-        /* Search bar */
         .search-wrap { flex: 1; max-width: 520px; position: relative; }
         .search-bar { width: 100%; height: 46px; padding: 0 18px 0 48px; border-radius: 14px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; font-family: 'Inter', sans-serif; color: #0f172a; outline: none; transition: all 0.2s; }
         .search-bar:focus { border-color: #22c55e; background: #fff; box-shadow: 0 0 0 4px rgba(34,197,94,0.1); }
         .search-bar::placeholder { color: #94a3b8; }
         .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
 
-        /* Nav actions */
         .nav-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
         .nav-btn { display: flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 12px; border: none; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.15s; }
         .btn-orders { background: #f0fdf4; color: #16a34a; }
@@ -1024,7 +1012,6 @@ export default function Marketplace() {
         .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff; }
         .user-name { font-size: 13px; font-weight: 600; color: #374151; }
 
-        /* Cart button */
         .cart-fab { position: fixed; bottom: 28px; right: 28px; z-index: 200; display: flex; align-items: center; gap: 10px; padding: 14px 22px; background: #22c55e; color: #fff; border: none; border-radius: 100px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; box-shadow: 0 8px 24px rgba(34,197,94,0.4); transition: all 0.2s; }
         .cart-fab:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(34,197,94,0.5); background: #16a34a; }
         .cart-count { background: #fff; color: #16a34a; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
@@ -1044,13 +1031,13 @@ export default function Marketplace() {
 
         /* Trust badges */
         .trust-row { display: flex; gap: 20px; margin-top: 36px; flex-wrap: wrap; }
-        .trust-badge { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: #374151; }
-        .trust-icon { width: 28px; height: 28px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #374151; }
+        .trust-icon-circle { width: 32px; height: 32px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); flex-shrink: 0; }
 
         /* Hero right — floating cards */
         .hero-right { display: flex; justify-content: center; align-items: center; position: relative; height: 300px; }
         .float-card { position: absolute; background: #fff; border-radius: 20px; padding: 16px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; }
-        .float-card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .float-card-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .float-card-text { font-size: 13px; }
         .float-card-name { font-weight: 700; color: #0f172a; margin-bottom: 2px; }
         .float-card-price { font-weight: 600; color: #22c55e; }
@@ -1058,7 +1045,7 @@ export default function Marketplace() {
         .float-mid { bottom: 30px; right: 10px; }
         .float-small { top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .delivery-pill { position: absolute; top: 20px; right: 20px; background: #22c55e; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-        .shops-pill { position: absolute; bottom: 20px; left: 30px; background: #0f172a; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; }
+        .shops-pill { position: absolute; bottom: 20px; left: 30px; background: #0f172a; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
 
         /* ── Main content ── */
         .main { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
@@ -1082,7 +1069,6 @@ export default function Marketplace() {
         .shop-card { background: #fff; border-radius: 20px; overflow: hidden; cursor: pointer; border: 1.5px solid #f1f5f9; transition: all 0.22s; }
         .shop-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); border-color: transparent; }
         .shop-banner { height: 110px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .shop-banner-icon { font-size: 48px; }
         .shop-open-tag { position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; }
         .tag-open { background: rgba(34,197,94,0.15); color: #16a34a; }
         .tag-closed { background: rgba(239,68,68,0.15); color: #ef4444; }
@@ -1103,7 +1089,7 @@ export default function Marketplace() {
 
         /* Empty */
         .empty { text-align: center; padding: 72px 0; }
-        .empty-icon { font-size: 52px; margin-bottom: 14px; }
+        .empty-icon { margin-bottom: 14px; display: flex; justify-content: center; }
         .empty-title { font-size: 20px; font-weight: 800; color: #374151; margin-bottom: 6px; }
         .empty-sub { font-size: 14px; color: #94a3b8; }
 
@@ -1121,11 +1107,25 @@ export default function Marketplace() {
         .results-text strong { color: #0f172a; }
         .open-badge { background: #dcfce7; color: #16a34a; padding: 4px 10px; border-radius: 100px; font-size: 12px; font-weight: 700; }
 
+        /* ── Map section ── */
+        .map-section { background: #fff; border-top: 1px solid #f1f5f9; padding: 0; }
+        .map-header { max-width: 1200px; margin: 0 auto; padding: 40px 24px 24px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .map-header-left {}
+        .map-title { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+        .map-title-icon { width: 36px; height: 36px; background: #f0fdf4; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .map-sub { font-size: 14px; color: #94a3b8; display: flex; align-items: center; gap: 8px; }
+        .map-count-badge { background: #f0fdf4; color: #16a34a; padding: 3px 10px; border-radius: 100px; font-size: 12px; font-weight: 700; }
+        .map-open-btn { display: flex; align-items: center; gap: 6px; padding: 10px 20px; background: #0f172a; color: #fff; border: none; border-radius: 12px; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
+        .map-open-btn:hover { background: #1e293b; transform: translateY(-1px); }
+        .map-frame { width: 100%; height: 380px; border: none; display: block; background: #f1f5f9; filter: grayscale(0.15); }
+        .map-footer { max-width: 1200px; margin: 0 auto; padding: 16px 24px 32px; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #94a3b8; }
+
         @media (max-width: 768px) {
           .hero-inner { grid-template-columns: 1fr; }
           .hero-right { display: none; }
           .hero-title { font-size: 32px; }
           .cat-grid { grid-template-columns: repeat(4, 1fr); }
+          .map-header { flex-direction: column; align-items: flex-start; gap: 16px; }
         }
       `}</style>
 
@@ -1135,9 +1135,7 @@ export default function Marketplace() {
           <div className="logo">Hyper<em>local</em></div>
 
           <div className="search-wrap">
-            <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+            <span className="search-icon"><Search size={18} /></span>
             <input
               className="search-bar"
               type="text"
@@ -1149,9 +1147,7 @@ export default function Marketplace() {
 
           <div className="nav-actions">
             <button className="nav-btn btn-orders" onClick={() => navigate('/customer/orders')}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" />
-              </svg>
+              <ClipboardList size={15} />
               My Orders
             </button>
             <div className="user-chip">
@@ -1159,6 +1155,7 @@ export default function Marketplace() {
               <span className="user-name">{user?.name?.split(' ')[0]}</span>
             </div>
             <button className="nav-btn btn-logout" onClick={() => { logout(); navigate('/login') }}>
+              <LogOut size={14} />
               Logout
             </button>
           </div>
@@ -1170,7 +1167,7 @@ export default function Marketplace() {
         <div className="hero-inner">
           <div>
             <div className="hero-tag">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8" /></svg>
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4" /></svg>
               {userLocation ? 'Shops near you · 10km radius' : 'Your local marketplace'}
             </div>
             <h1 className="hero-title">
@@ -1189,53 +1186,69 @@ export default function Marketplace() {
               </button>
               <button
                 className="hero-btn-secondary"
-                onClick={() => navigate('/nearby')}
+                onClick={() => document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' })}
               >
                 Explore on Map
               </button>
             </div>
+
+            {/* Trust badges — Lucide icons */}
             <div className="trust-row">
               {[
-                { icon: '✓', text: 'Verified local shops' },
-                { icon: '⚡', text: 'Fast delivery' },
-                { icon: '🔒', text: 'Secure payments' },
-              ].map((t, i) => (
+                { Icon: BadgeCheck, text: 'Verified local shops', color: '#16a34a' },
+                { Icon: Zap, text: 'Fast delivery', color: '#d97706' },
+                { Icon: ShieldCheck, text: 'Secure payments', color: '#2563eb' },
+              ].map(({ Icon, text, color }, i) => (
                 <div key={i} className="trust-badge">
-                  <div className="trust-icon">{t.icon}</div>
-                  {t.text}
+                  <div className="trust-icon-circle">
+                    <Icon size={16} color={color} strokeWidth={2} />
+                  </div>
+                  {text}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Floating cards */}
+          {/* Floating cards — Lucide icons */}
           <div className="hero-right">
             <div className="delivery-pill">
-              ⚡ 10 min delivery
+              <Zap size={12} />
+              10 min delivery
             </div>
+
             <div className="float-card float-big">
-              <div className="float-card-icon" style={{ background: '#f0fdf4' }}>🛒</div>
+              <div className="float-card-icon" style={{ background: '#f0fdf4', boxShadow: '0 4px 12px rgba(34,197,94,0.15)' }}>
+                <ShoppingBasket size={26} color="#16a34a" strokeWidth={1.8} />
+              </div>
               <div className="float-card-text">
                 <div className="float-card-name">Fresh Groceries</div>
                 <div className="float-card-price">From ₹49</div>
               </div>
             </div>
+
             <div className="float-card float-small">
-              <div className="float-card-icon" style={{ background: '#eff6ff' }}>🥛</div>
+              <div className="float-card-icon" style={{ background: '#eff6ff', boxShadow: '0 4px 12px rgba(37,99,235,0.12)' }}>
+                <Milk size={26} color="#2563eb" strokeWidth={1.8} />
+              </div>
               <div className="float-card-text">
                 <div className="float-card-name">Dairy Products</div>
                 <div className="float-card-price">From ₹25</div>
               </div>
             </div>
+
             <div className="float-card float-mid">
-              <div className="float-card-icon" style={{ background: '#fef2f2' }}>🍎</div>
+              <div className="float-card-icon" style={{ background: '#fef2f2', boxShadow: '0 4px 12px rgba(220,38,38,0.12)' }}>
+                <Apple size={26} color="#dc2626" strokeWidth={1.8} />
+              </div>
               <div className="float-card-text">
                 <div className="float-card-name">Fresh Fruits</div>
                 <div className="float-card-price">From ₹35</div>
               </div>
             </div>
+
             <div className="shops-pill">
-              🏪 {shops.length} shops nearby
+              <MapPin size={12} />
+              {shops.length} shops nearby
             </div>
           </div>
         </div>
@@ -1303,9 +1316,7 @@ export default function Marketplace() {
             {category && (
               <button className="see-all" onClick={() => setCategory('')}>
                 View all
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-                </svg>
+                <ChevronRight size={14} />
               </button>
             )}
           </div>
@@ -1318,7 +1329,7 @@ export default function Marketplace() {
             </div>
           ) : filteredShops.length === 0 ? (
             <div className="empty">
-              <div className="empty-icon">🔍</div>
+              <div className="empty-icon"><Search size={48} color="#cbd5e1" strokeWidth={1.5} /></div>
               <p className="empty-title">No shops found</p>
               <p className="empty-sub">Try a different category or clear your search</p>
             </div>
@@ -1330,14 +1341,12 @@ export default function Marketplace() {
                   className="shop-card"
                   onClick={() => navigate(`/shop/${shop._id}`)}
                 >
-                  {/* Banner */}
+                  {/* Banner — SVG icon, no emoji */}
                   <div
                     className="shop-banner"
                     style={{ background: `linear-gradient(135deg, ${catBg[shop.category] || '#f8fafc'}, #fff)` }}
                   >
-                    <div style={{ fontSize: 52 }}>
-                      {shop.category === 'grocery' ? '🛒' : shop.category === 'food' ? '🍱' : shop.category === 'fruit' ? '🍎' : shop.category === 'bakery' ? '🥐' : shop.category === 'dairy' ? '🥛' : shop.category === 'stationary' ? '📚' : '🏪'}
-                    </div>
+                    <CategoryBannerIcon category={shop.category} />
                     <span className={`shop-open-tag ${shop.isOpen ? 'tag-open' : 'tag-closed'}`}>
                       {shop.isOpen ? '● Open' : '● Closed'}
                     </span>
@@ -1353,23 +1362,17 @@ export default function Marketplace() {
                     </div>
                     <div className="shop-name">{shop.name}</div>
                     <div className="shop-addr-row">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
-                      </svg>
+                      <MapPin size={11} />
                       {shop.location?.address || 'Location not set'}
                     </div>
                     <div className="shop-footer">
                       <div className="shop-contact">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14z" />
-                        </svg>
+                        <Phone size={11} />
                         {shop.contact}
                       </div>
                       <button className="view-btn">
                         View Shop
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-                        </svg>
+                        <ChevronRight size={11} />
                       </button>
                     </div>
                   </div>
@@ -1380,13 +1383,64 @@ export default function Marketplace() {
         </div>
       </div>
 
+      {/* ── Map section — full width at bottom ── */}
+      <section id="map-section" className="map-section">
+        <div className="map-header">
+          <div className="map-header-left">
+            <div className="map-title">
+              <div className="map-title-icon">
+                <MapPin size={18} color="#22c55e" strokeWidth={2} />
+              </div>
+              Nearby on Map
+            </div>
+            <div className="map-sub">
+              <span className="map-count-badge">{shops.length} shops</span>
+              within 10 km of your location
+            </div>
+          </div>
+          <button className="map-open-btn" onClick={() => navigate('/nearby')}>
+            <MapPin size={15} />
+            Open full map
+            <ChevronRight size={14} />
+          </button>
+        </div>
+
+        {userLocation ? (
+          <iframe
+            className="map-frame"
+            title="Nearby shops map"
+            src={`https://www.openstreetmap.org/export/embed.html?bbox=${userLocation.longitude - 0.05},${userLocation.latitude - 0.05},${userLocation.longitude + 0.05},${userLocation.latitude + 0.05}&layer=mapnik&marker=${userLocation.latitude},${userLocation.longitude}`}
+            allowFullScreen
+          />
+        ) : (
+          <div className="map-frame" style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            gap: 12, background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)'
+          }}>
+            <div style={{ width: 56, height: 56, borderRadius: 16, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
+              <MapPin size={26} color="#94a3b8" strokeWidth={1.5} />
+            </div>
+            <p style={{ fontSize: 15, fontWeight: 700, color: '#374151' }}>Location access needed</p>
+            <p style={{ fontSize: 13, color: '#94a3b8' }}>Allow location to see shops near you on the map</p>
+            <button
+              onClick={getUserLocation}
+              style={{ marginTop: 4, padding: '10px 22px', background: '#22c55e', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 700, fontFamily: 'Inter, sans-serif', cursor: 'pointer' }}
+            >
+              Enable Location
+            </button>
+          </div>
+        )}
+
+        <div className="map-footer">
+          <MapPin size={12} />
+          Map data © OpenStreetMap contributors
+        </div>
+      </section>
+
       {/* ── Floating Cart ── */}
       {totalItems > 0 && (
         <button className="cart-fab" onClick={() => navigate('/cart')}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
-            <path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6" />
-          </svg>
+          <ShoppingBag size={18} />
           <span>{totalItems} item{totalItems > 1 ? 's' : ''} · ₹{totalPrice}</span>
           <div className="cart-count">{totalItems}</div>
         </button>
