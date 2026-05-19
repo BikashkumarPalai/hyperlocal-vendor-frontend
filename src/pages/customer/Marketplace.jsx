@@ -874,36 +874,678 @@
 // }
 
 
+// import { useState, useEffect } from 'react'
+// import { useNavigate } from 'react-router-dom'
+// import axios from '../../api/axios'
+// import { useAuth } from '../../context/AuthContext'
+// import { useCart } from '../../context/CartContext'
+// import {
+//   ShoppingBasket, Milk, Apple, Wheat,
+//   BadgeCheck, Zap, ShieldCheck,
+//   ShoppingCart, UtensilsCrossed, Grape, Croissant, Package, PenLine, LayoutGrid,
+//   MapPin, Search, LogOut, ClipboardList, ChevronRight, Phone, ShoppingBag
+// } from 'lucide-react'
+
+// const CATEGORIES = [
+//   { id: '', label: 'All', color: '#0f172a', bg: '#f1f5f9', icon: <LayoutGrid size={22} /> },
+//   { id: 'grocery', label: 'Grocery', color: '#16a34a', bg: '#f0fdf4', icon: <ShoppingCart size={22} /> },
+//   { id: 'food', label: 'Food', color: '#ea580c', bg: '#fff7ed', icon: <UtensilsCrossed size={22} /> },
+//   { id: 'fruit', label: 'Fruits', color: '#dc2626', bg: '#fef2f2', icon: <Apple size={22} /> },
+//   { id: 'bakery', label: 'Bakery', color: '#d97706', bg: '#fffbeb', icon: <Croissant size={22} /> },
+//   { id: 'dairy', label: 'Dairy', color: '#2563eb', bg: '#eff6ff', icon: <Milk size={22} /> },
+//   { id: 'stationary', label: 'Stationery', color: '#7c3aed', bg: '#f5f3ff', icon: <PenLine size={22} /> },
+//   { id: 'other', label: 'Other', color: '#64748b', bg: '#f8fafc', icon: <Package size={22} /> },
+// ]
+
+// const catColor = { grocery: '#16a34a', food: '#ea580c', fruit: '#dc2626', bakery: '#d97706', dairy: '#2563eb', stationary: '#7c3aed', other: '#64748b' }
+// const catBg = { grocery: '#f0fdf4', food: '#fff7ed', fruit: '#fef2f2', bakery: '#fffbeb', dairy: '#eff6ff', stationary: '#f5f3ff', other: '#f8fafc' }
+
+// const CategoryBannerIcon = ({ category }) => {
+//   const props = { size: 40, strokeWidth: 1.5 }
+//   const color = catColor[category] || '#64748b'
+//   const bg = catBg[category] || '#f8fafc'
+//   const icons = {
+//     grocery: <ShoppingCart {...props} color={color} />,
+//     food: <UtensilsCrossed {...props} color={color} />,
+//     fruit: <Apple {...props} color={color} />,
+//     bakery: <Croissant {...props} color={color} />,
+//     dairy: <Milk {...props} color={color} />,
+//     stationary: <PenLine {...props} color={color} />,
+//     other: <Package {...props} color={color} />,
+//   }
+//   return (
+//     <div style={{
+//       width: 80, height: 80, borderRadius: 24,
+//       background: bg,
+//       border: `1.5px solid ${color}22`,
+//       display: 'flex', alignItems: 'center', justifyContent: 'center',
+//       boxShadow: `0 4px 16px ${color}18`
+//     }}>
+//       {icons[category] || <Package {...props} color={color} />}
+//     </div>
+//   )
+// }
+
+// export default function Marketplace() {
+//   const { user, logout } = useAuth()
+//   const { totalItems, totalPrice } = useCart()
+//   const navigate = useNavigate()
+//   const [shops, setShops] = useState([])
+//   const [loading, setLoading] = useState(true)
+//   const [search, setSearch] = useState('')
+//   const [category, setCategory] = useState('')
+//   const [userLocation, setUserLocation] = useState(null)
+//   const [scrolled, setScrolled] = useState(false)
+
+//   useEffect(() => {
+//     const onScroll = () => setScrolled(window.scrollY > 60)
+//     window.addEventListener('scroll', onScroll)
+//     return () => window.removeEventListener('scroll', onScroll)
+//   }, [])
+
+//   useEffect(() => { getUserLocation() }, [])
+//   useEffect(() => { fetchShops() }, [userLocation])
+
+//   const getUserLocation = () => {
+//     navigator.geolocation.getCurrentPosition(
+//       pos => setUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+//       () => fetchShops()
+//     )
+//   }
+
+//   const fetchShops = async () => {
+//     try {
+//       setLoading(true)
+//       const params = {}
+//       if (userLocation) {
+//         params.latitude = userLocation.latitude
+//         params.longitude = userLocation.longitude
+//         params.radius = 10000
+//       }
+//       const res = await axios.get('/api/shop/all', { params })
+//       setShops(res.data.shops)
+//     } catch (err) { console.error(err) }
+//     finally { setLoading(false) }
+//   }
+
+//   const filteredShops = shops.filter(shop => {
+//     const matchSearch = shop.name.toLowerCase().includes(search.toLowerCase()) ||
+//       (shop.location?.address || '').toLowerCase().includes(search.toLowerCase())
+//     const matchCat = category === '' || shop.category === category
+//     return matchSearch && matchCat
+//   })
+
+//   const openShops = filteredShops.filter(s => s.isOpen).length
+
+//   return (
+//     <div style={{ minHeight: '100vh', background: '#fafafa', fontFamily: "'Inter', sans-serif" }}>
+//       <style>{`
+//         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+//         * { box-sizing: border-box; margin: 0; padding: 0; }
+
+//         /* ── Navbar ── */
+//         .navbar {
+//           position: sticky; top: 0; z-index: 100;
+//           background: rgba(255,255,255,0.95);
+//           backdrop-filter: blur(12px);
+//           border-bottom: 1px solid #f1f5f9;
+//           transition: box-shadow 0.2s;
+//         }
+//         .navbar.scrolled { box-shadow: 0 2px 24px rgba(0,0,0,0.07); }
+//         .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; gap: 20px; }
+//         .logo { font-size: 22px; font-weight: 900; color: #0f172a; letter-spacing: -0.8px; flex-shrink: 0; }
+//         .logo em { color: #22c55e; font-style: normal; }
+
+//         .search-wrap { flex: 1; max-width: 520px; position: relative; }
+//         .search-bar { width: 100%; height: 46px; padding: 0 18px 0 48px; border-radius: 14px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; font-family: 'Inter', sans-serif; color: #0f172a; outline: none; transition: all 0.2s; }
+//         .search-bar:focus { border-color: #22c55e; background: #fff; box-shadow: 0 0 0 4px rgba(34,197,94,0.1); }
+//         .search-bar::placeholder { color: #94a3b8; }
+//         .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
+
+//         .nav-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+//         .nav-btn { display: flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 12px; border: none; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.15s; }
+//         .btn-orders { background: #f0fdf4; color: #16a34a; }
+//         .btn-orders:hover { background: #dcfce7; }
+//         .btn-logout { background: #fef2f2; color: #ef4444; }
+//         .btn-logout:hover { background: #fee2e2; }
+//         .user-chip { display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border-radius: 100px; border: 1.5px solid #f1f5f9; background: #fff; }
+//         .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff; }
+//         .user-name { font-size: 13px; font-weight: 600; color: #374151; }
+
+//         .cart-fab { position: fixed; bottom: 28px; right: 28px; z-index: 200; display: flex; align-items: center; gap: 10px; padding: 14px 22px; background: #22c55e; color: #fff; border: none; border-radius: 100px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; box-shadow: 0 8px 24px rgba(34,197,94,0.4); transition: all 0.2s; }
+//         .cart-fab:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(34,197,94,0.5); background: #16a34a; }
+//         .cart-count { background: #fff; color: #16a34a; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+
+//         /* ── Hero ── */
+//         .hero { background: linear-gradient(135deg, #f0fdf4 0%, #fafffe 40%, #fffbeb 100%); padding: 64px 0 56px; border-bottom: 1px solid #f1f5f9; }
+//         .hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+//         .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; color: #16a34a; padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; }
+//         .hero-title { font-size: 48px; font-weight: 900; color: #0f172a; line-height: 1.08; letter-spacing: -2px; margin-bottom: 18px; }
+//         .hero-title em { color: #22c55e; font-style: normal; }
+//         .hero-sub { font-size: 16px; color: #64748b; line-height: 1.6; margin-bottom: 32px; font-weight: 400; max-width: 420px; }
+//         .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+//         .hero-btn-primary { padding: 14px 28px; background: #22c55e; color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(34,197,94,0.3); }
+//         .hero-btn-primary:hover { background: #16a34a; transform: translateY(-1px); }
+//         .hero-btn-secondary { padding: 14px 28px; background: #fff; color: #374151; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
+//         .hero-btn-secondary:hover { border-color: #22c55e; color: #22c55e; }
+
+//         /* Trust badges */
+//         .trust-row { display: flex; gap: 20px; margin-top: 36px; flex-wrap: wrap; }
+//         .trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #374151; }
+//         .trust-icon-circle { width: 32px; height: 32px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); flex-shrink: 0; }
+
+//         /* Hero right — floating cards */
+//         .hero-right { display: flex; justify-content: center; align-items: center; position: relative; height: 300px; }
+//         .float-card { position: absolute; background: #fff; border-radius: 20px; padding: 16px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; }
+//         .float-card-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+//         .float-card-text { font-size: 13px; }
+//         .float-card-name { font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+//         .float-card-price { font-weight: 600; color: #22c55e; }
+//         .float-big { top: 10px; left: 20px; }
+//         .float-mid { bottom: 30px; right: 10px; }
+//         .float-small { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+//         .delivery-pill { position: absolute; top: 20px; right: 20px; background: #22c55e; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+//         .shops-pill { position: absolute; bottom: 20px; left: 30px; background: #0f172a; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+
+//         /* ── Main content ── */
+//         .main { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+//         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+//         .section-title { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
+//         .section-sub { font-size: 14px; color: #94a3b8; margin-top: 3px; }
+//         .see-all { font-size: 13px; font-weight: 600; color: #22c55e; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 4px; }
+
+//         /* ── Category cards ── */
+//         .cat-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; margin-bottom: 48px; }
+//         .cat-card { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 8px; border-radius: 20px; border: 2px solid transparent; cursor: pointer; transition: all 0.2s; background: #fff; }
+//         .cat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+//         .cat-card.active { border-color: currentColor; }
+//         .cat-icon-wrap { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+//         .cat-card:hover .cat-icon-wrap { transform: scale(1.08); }
+//         .cat-label { font-size: 12px; font-weight: 600; color: #374151; text-align: center; }
+//         .cat-card.active .cat-label { font-weight: 700; }
+
+//         /* ── Shop cards ── */
+//         .shops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+//         .shop-card { background: #fff; border-radius: 20px; overflow: hidden; cursor: pointer; border: 1.5px solid #f1f5f9; transition: all 0.22s; }
+//         .shop-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); border-color: transparent; }
+//         .shop-banner { height: 110px; display: flex; align-items: center; justify-content: center; position: relative; }
+//         .shop-open-tag { position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; }
+//         .tag-open { background: rgba(34,197,94,0.15); color: #16a34a; }
+//         .tag-closed { background: rgba(239,68,68,0.15); color: #ef4444; }
+//         .shop-body { padding: 16px; }
+//         .shop-cat-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+//         .shop-cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+//         .shop-cat-text { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+//         .shop-name { font-size: 16px; font-weight: 800; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.3px; }
+//         .shop-addr-row { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #94a3b8; margin-bottom: 14px; }
+//         .shop-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #f8fafc; }
+//         .shop-contact { font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 4px; }
+//         .view-btn { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #22c55e; background: #f0fdf4; padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+//         .shop-card:hover .view-btn { background: #22c55e; color: #fff; }
+
+//         /* Skeleton */
+//         .skeleton { background: linear-gradient(90deg, #f8fafc 25%, #f1f5f9 50%, #f8fafc 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 20px; }
+//         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+//         /* Empty */
+//         .empty { text-align: center; padding: 72px 0; }
+//         .empty-icon { margin-bottom: 14px; display: flex; justify-content: center; }
+//         .empty-title { font-size: 20px; font-weight: 800; color: #374151; margin-bottom: 6px; }
+//         .empty-sub { font-size: 14px; color: #94a3b8; }
+
+//         /* Promo banner */
+//         .promo-banner { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 24px; padding: 32px 40px; margin-bottom: 48px; display: flex; justify-content: space-between; align-items: center; }
+//         .promo-text h3 { font-size: 24px; font-weight: 900; color: #fff; letter-spacing: -0.5px; margin-bottom: 6px; }
+//         .promo-text p { font-size: 14px; color: #94a3b8; }
+//         .promo-badge { background: #22c55e; color: #fff; padding: 6px 16px; border-radius: 100px; font-size: 13px; font-weight: 800; margin-bottom: 12px; display: inline-block; }
+//         .promo-btn { padding: 12px 24px; background: #22c55e; color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
+//         .promo-btn:hover { background: #16a34a; }
+
+//         /* Results bar */
+//         .results-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+//         .results-text { font-size: 14px; color: #64748b; font-weight: 500; }
+//         .results-text strong { color: #0f172a; }
+//         .open-badge { background: #dcfce7; color: #16a34a; padding: 4px 10px; border-radius: 100px; font-size: 12px; font-weight: 700; }
+
+//         /* ── Map section ── */
+//         .map-section { background: #fff; border-top: 1px solid #f1f5f9; padding: 0; }
+//         .map-header { max-width: 1200px; margin: 0 auto; padding: 40px 24px 24px; display: flex; justify-content: space-between; align-items: flex-end; }
+//         .map-header-left {}
+//         .map-title { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+//         .map-title-icon { width: 36px; height: 36px; background: #f0fdf4; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+//         .map-sub { font-size: 14px; color: #94a3b8; display: flex; align-items: center; gap: 8px; }
+//         .map-count-badge { background: #f0fdf4; color: #16a34a; padding: 3px 10px; border-radius: 100px; font-size: 12px; font-weight: 700; }
+//         .map-open-btn { display: flex; align-items: center; gap: 6px; padding: 10px 20px; background: #0f172a; color: #fff; border: none; border-radius: 12px; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
+//         .map-open-btn:hover { background: #1e293b; transform: translateY(-1px); }
+//         .map-frame { width: 100%; height: 380px; border: none; display: block; background: #f1f5f9; filter: grayscale(0.15); }
+//         .map-footer { max-width: 1200px; margin: 0 auto; padding: 16px 24px 32px; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #94a3b8; }
+
+//         @media (max-width: 768px) {
+//           .hero-inner { grid-template-columns: 1fr; }
+//           .hero-right { display: none; }
+//           .hero-title { font-size: 32px; }
+//           .cat-grid { grid-template-columns: repeat(4, 1fr); }
+//           .map-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+//         }
+//       `}</style>
+
+//       {/* ── Navbar ── */}
+//       <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
+//         <div className="nav-inner">
+//           <div className="logo">Hyper<em>local</em></div>
+
+//           <div className="search-wrap">
+//             <span className="search-icon"><Search size={18} /></span>
+//             <input
+//               className="search-bar"
+//               type="text"
+//               placeholder="Search for shops, groceries, bakery..."
+//               value={search}
+//               onChange={e => setSearch(e.target.value)}
+//             />
+//           </div>
+
+//           <div className="nav-actions">
+//             <button className="nav-btn btn-orders" onClick={() => navigate('/customer/orders')}>
+//               <ClipboardList size={15} />
+//               My Orders
+//             </button>
+//             <div className="user-chip">
+//               <div className="avatar">{user?.name?.[0]?.toUpperCase()}</div>
+//               <span className="user-name">{user?.name?.split(' ')[0]}</span>
+//             </div>
+//             <button className="nav-btn btn-logout" onClick={() => { logout(); navigate('/login') }}>
+//               <LogOut size={14} />
+//               Logout
+//             </button>
+//           </div>
+//         </div>
+//       </nav>
+
+//       {/* ── Hero ── */}
+//       <section className="hero">
+//         <div className="hero-inner">
+//           <div>
+//             <div className="hero-tag">
+//               <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4" /></svg>
+//               {userLocation ? 'Shops near you · 10km radius' : 'Your local marketplace'}
+//             </div>
+//             <h1 className="hero-title">
+//               Everything you need,<br />
+//               delivered <em>fast</em>.
+//             </h1>
+//             <p className="hero-sub">
+//               Groceries, fruits, dairy, bakery and daily essentials from verified local shops near you.
+//             </p>
+//             <div className="hero-btns">
+//               <button
+//                 className="hero-btn-primary"
+//                 onClick={() => document.getElementById('shops-section').scrollIntoView({ behavior: 'smooth' })}
+//               >
+//                 Start Shopping →
+//               </button>
+//               <button
+//                 className="hero-btn-secondary"
+//                 onClick={() => document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' })}
+//               >
+//                 Explore on Map
+//               </button>
+//             </div>
+
+//             {/* Trust badges — Lucide icons */}
+//             <div className="trust-row">
+//               {[
+//                 { Icon: BadgeCheck, text: 'Verified local shops', color: '#16a34a' },
+//                 { Icon: Zap, text: 'Fast delivery', color: '#d97706' },
+//                 { Icon: ShieldCheck, text: 'Secure payments', color: '#2563eb' },
+//               ].map(({ Icon, text, color }, i) => (
+//                 <div key={i} className="trust-badge">
+//                   <div className="trust-icon-circle">
+//                     <Icon size={16} color={color} strokeWidth={2} />
+//                   </div>
+//                   {text}
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+
+//           {/* Floating cards — Lucide icons */}
+//           <div className="hero-right">
+//             <div className="delivery-pill">
+//               <Zap size={12} />
+//               10 min delivery
+//             </div>
+
+//             <div className="float-card float-big">
+//               <div className="float-card-icon" style={{ background: '#f0fdf4', boxShadow: '0 4px 12px rgba(34,197,94,0.15)' }}>
+//                 <ShoppingBasket size={26} color="#16a34a" strokeWidth={1.8} />
+//               </div>
+//               <div className="float-card-text">
+//                 <div className="float-card-name">Fresh Groceries</div>
+//                 <div className="float-card-price">From ₹49</div>
+//               </div>
+//             </div>
+
+//             <div className="float-card float-small">
+//               <div className="float-card-icon" style={{ background: '#eff6ff', boxShadow: '0 4px 12px rgba(37,99,235,0.12)' }}>
+//                 <Milk size={26} color="#2563eb" strokeWidth={1.8} />
+//               </div>
+//               <div className="float-card-text">
+//                 <div className="float-card-name">Dairy Products</div>
+//                 <div className="float-card-price">From ₹25</div>
+//               </div>
+//             </div>
+
+//             <div className="float-card float-mid">
+//               <div className="float-card-icon" style={{ background: '#fef2f2', boxShadow: '0 4px 12px rgba(220,38,38,0.12)' }}>
+//                 <Apple size={26} color="#dc2626" strokeWidth={1.8} />
+//               </div>
+//               <div className="float-card-text">
+//                 <div className="float-card-name">Fresh Fruits</div>
+//                 <div className="float-card-price">From ₹35</div>
+//               </div>
+//             </div>
+
+//             <div className="shops-pill">
+//               <MapPin size={12} />
+//               {shops.length} shops nearby
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* ── Main content ── */}
+//       <div className="main">
+
+//         {/* ── Category cards ── */}
+//         <div style={{ marginBottom: 48 }}>
+//           <div className="section-header">
+//             <div>
+//               <div className="section-title">Shop by Category</div>
+//               <div className="section-sub">What are you looking for today?</div>
+//             </div>
+//           </div>
+//           <div className="cat-grid">
+//             {CATEGORIES.map(cat => (
+//               <div
+//                 key={cat.id}
+//                 className={`cat-card${category === cat.id ? ' active' : ''}`}
+//                 style={{ color: cat.color, borderColor: category === cat.id ? cat.color : 'transparent' }}
+//                 onClick={() => setCategory(cat.id)}
+//               >
+//                 <div
+//                   className="cat-icon-wrap"
+//                   style={{ background: category === cat.id ? cat.color : cat.bg, color: category === cat.id ? '#fff' : cat.color }}
+//                 >
+//                   {cat.icon}
+//                 </div>
+//                 <span className="cat-label">{cat.label}</span>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+
+//         {/* ── Promo banner ── */}
+//         <div className="promo-banner">
+//           <div className="promo-text">
+//             <div className="promo-badge">Limited Time</div>
+//             <h3>Free delivery on your first order</h3>
+//             <p>Use code HYPERLOCAL at checkout</p>
+//           </div>
+//           <button className="promo-btn" onClick={() => document.getElementById('shops-section').scrollIntoView({ behavior: 'smooth' })}>
+//             Order Now →
+//           </button>
+//         </div>
+
+//         {/* ── Shops section ── */}
+//         <div id="shops-section">
+//           <div className="results-bar">
+//             <div>
+//               <div className="section-title">
+//                 {category ? `${CATEGORIES.find(c => c.id === category)?.label} Shops` : 'Nearby Shops'}
+//               </div>
+//               {!loading && (
+//                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+//                   <span className="results-text">
+//                     <strong>{filteredShops.length}</strong> shops found
+//                   </span>
+//                   <span className="open-badge">{openShops} open now</span>
+//                 </div>
+//               )}
+//             </div>
+//             {category && (
+//               <button className="see-all" onClick={() => setCategory('')}>
+//                 View all
+//                 <ChevronRight size={14} />
+//               </button>
+//             )}
+//           </div>
+
+//           {loading ? (
+//             <div className="shops-grid">
+//               {[1, 2, 3, 4, 5, 6].map(i => (
+//                 <div key={i} className="skeleton" style={{ height: 220 }} />
+//               ))}
+//             </div>
+//           ) : filteredShops.length === 0 ? (
+//             <div className="empty">
+//               <div className="empty-icon"><Search size={48} color="#cbd5e1" strokeWidth={1.5} /></div>
+//               <p className="empty-title">No shops found</p>
+//               <p className="empty-sub">Try a different category or clear your search</p>
+//             </div>
+//           ) : (
+//             <div className="shops-grid">
+//               {filteredShops.map(shop => (
+//                 <div
+//                   key={shop._id}
+//                   className="shop-card"
+//                   onClick={() => navigate(`/shop/${shop._id}`)}
+//                 >
+//                   {/* Banner — SVG icon, no emoji */}
+//                   <div
+//                     className="shop-banner"
+//                     style={{ background: `linear-gradient(135deg, ${catBg[shop.category] || '#f8fafc'}, #fff)` }}
+//                   >
+//                     <CategoryBannerIcon category={shop.category} />
+//                     <span className={`shop-open-tag ${shop.isOpen ? 'tag-open' : 'tag-closed'}`}>
+//                       {shop.isOpen ? '● Open' : '● Closed'}
+//                     </span>
+//                   </div>
+
+//                   {/* Body */}
+//                   <div className="shop-body">
+//                     <div className="shop-cat-row">
+//                       <div className="shop-cat-dot" style={{ background: catColor[shop.category] || '#64748b' }} />
+//                       <span className="shop-cat-text" style={{ color: catColor[shop.category] || '#64748b' }}>
+//                         {shop.category}
+//                       </span>
+//                     </div>
+//                     <div className="shop-name">{shop.name}</div>
+//                     <div className="shop-addr-row">
+//                       <MapPin size={11} />
+//                       {shop.location?.address || 'Location not set'}
+//                     </div>
+//                     <div className="shop-footer">
+//                       <div className="shop-contact">
+//                         <Phone size={11} />
+//                         {shop.contact}
+//                       </div>
+//                       <button className="view-btn">
+//                         View Shop
+//                         <ChevronRight size={11} />
+//                       </button>
+//                     </div>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           )}
+//         </div>
+//       </div>
+
+//       {/* ── Map section — full width at bottom ── */}
+//       <section id="map-section" className="map-section">
+//         <div className="map-header">
+//           <div className="map-header-left">
+//             <div className="map-title">
+//               <div className="map-title-icon">
+//                 <MapPin size={18} color="#22c55e" strokeWidth={2} />
+//               </div>
+//               Nearby on Map
+//             </div>
+//             <div className="map-sub">
+//               <span className="map-count-badge">{shops.length} shops</span>
+//               within 10 km of your location
+//             </div>
+//           </div>
+//           <button className="map-open-btn" onClick={() => navigate('/nearby')}>
+//             <MapPin size={15} />
+//             Open full map
+//             <ChevronRight size={14} />
+//           </button>
+//         </div>
+
+//         {userLocation ? (
+//           <iframe
+//             className="map-frame"
+//             title="Nearby shops map"
+//             src={`https://www.openstreetmap.org/export/embed.html?bbox=${userLocation.longitude - 0.05},${userLocation.latitude - 0.05},${userLocation.longitude + 0.05},${userLocation.latitude + 0.05}&layer=mapnik&marker=${userLocation.latitude},${userLocation.longitude}`}
+//             allowFullScreen
+//           />
+//         ) : (
+//           <div className="map-frame" style={{
+//             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+//             gap: 12, background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)'
+//           }}>
+//             <div style={{ width: 56, height: 56, borderRadius: 16, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
+//               <MapPin size={26} color="#94a3b8" strokeWidth={1.5} />
+//             </div>
+//             <p style={{ fontSize: 15, fontWeight: 700, color: '#374151' }}>Location access needed</p>
+//             <p style={{ fontSize: 13, color: '#94a3b8' }}>Allow location to see shops near you on the map</p>
+//             <button
+//               onClick={getUserLocation}
+//               style={{ marginTop: 4, padding: '10px 22px', background: '#22c55e', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 700, fontFamily: 'Inter, sans-serif', cursor: 'pointer' }}
+//             >
+//               Enable Location
+//             </button>
+//           </div>
+//         )}
+
+//         <div className="map-footer">
+//           <MapPin size={12} />
+//           Map data © OpenStreetMap contributors
+//         </div>
+//       </section>
+
+//       {/* ── Floating Cart ── */}
+//       {totalItems > 0 && (
+//         <button className="cart-fab" onClick={() => navigate('/cart')}>
+//           <ShoppingBag size={18} />
+//           <span>{totalItems} item{totalItems > 1 ? 's' : ''} · ₹{totalPrice}</span>
+//           <div className="cart-count">{totalItems}</div>
+//         </button>
+//       )}
+//     </div>
+//   )
+// }
+
+
+
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
+
 import {
-  ShoppingBasket, Milk, Apple, Wheat,
-  BadgeCheck, Zap, ShieldCheck,
-  ShoppingCart, UtensilsCrossed, Grape, Croissant, Package, PenLine, LayoutGrid,
-  MapPin, Search, LogOut, ClipboardList, ChevronRight, Phone, ShoppingBag
+  ShoppingBasket, Milk, Apple, BadgeCheck, Zap, ShieldCheck, ShoppingCart, UtensilsCrossed, Croissant, Package, PenLine, LayoutGrid, MapPin, Search, LogOut, ClipboardList, ChevronRight, Phone, ShoppingBag,
 } from 'lucide-react'
 
 const CATEGORIES = [
-  { id: '', label: 'All', color: '#0f172a', bg: '#f1f5f9', icon: <LayoutGrid size={22} /> },
-  { id: 'grocery', label: 'Grocery', color: '#16a34a', bg: '#f0fdf4', icon: <ShoppingCart size={22} /> },
-  { id: 'food', label: 'Food', color: '#ea580c', bg: '#fff7ed', icon: <UtensilsCrossed size={22} /> },
-  { id: 'fruit', label: 'Fruits', color: '#dc2626', bg: '#fef2f2', icon: <Apple size={22} /> },
-  { id: 'bakery', label: 'Bakery', color: '#d97706', bg: '#fffbeb', icon: <Croissant size={22} /> },
-  { id: 'dairy', label: 'Dairy', color: '#2563eb', bg: '#eff6ff', icon: <Milk size={22} /> },
-  { id: 'stationary', label: 'Stationery', color: '#7c3aed', bg: '#f5f3ff', icon: <PenLine size={22} /> },
-  { id: 'other', label: 'Other', color: '#64748b', bg: '#f8fafc', icon: <Package size={22} /> },
+  {
+    id: '',
+    label: 'All',
+    color: '#0f172a',
+    bg: '#f1f5f9',
+    icon: <LayoutGrid size={22} />,
+  },
+  {
+    id: 'grocery',
+    label: 'Grocery',
+    color: '#16a34a',
+    bg: '#f0fdf4',
+    icon: <ShoppingCart size={22} />,
+  },
+  {
+    id: 'food',
+    label: 'Food',
+    color: '#ea580c',
+    bg: '#fff7ed',
+    icon: <UtensilsCrossed size={22} />,
+  },
+  {
+    id: 'fruit',
+    label: 'Fruits',
+    color: '#dc2626',
+    bg: '#fef2f2',
+    icon: <Apple size={22} />,
+  },
+  {
+    id: 'bakery',
+    label: 'Bakery',
+    color: '#d97706',
+    bg: '#fffbeb',
+    icon: <Croissant size={22} />,
+  },
+  {
+    id: 'dairy',
+    label: 'Dairy',
+    color: '#2563eb',
+    bg: '#eff6ff',
+    icon: <Milk size={22} />,
+  },
+  {
+    id: 'stationary',
+    label: 'Stationery',
+    color: '#7c3aed',
+    bg: '#f5f3ff',
+    icon: <PenLine size={22} />,
+  },
+  {
+    id: 'other',
+    label: 'Other',
+    color: '#64748b',
+    bg: '#f8fafc',
+    icon: <Package size={22} />,
+  },
 ]
 
-const catColor = { grocery: '#16a34a', food: '#ea580c', fruit: '#dc2626', bakery: '#d97706', dairy: '#2563eb', stationary: '#7c3aed', other: '#64748b' }
-const catBg = { grocery: '#f0fdf4', food: '#fff7ed', fruit: '#fef2f2', bakery: '#fffbeb', dairy: '#eff6ff', stationary: '#f5f3ff', other: '#f8fafc' }
+const catColor = {
+  grocery: '#16a34a',
+  food: '#ea580c',
+  fruit: '#dc2626',
+  bakery: '#d97706',
+  dairy: '#2563eb',
+  stationary: '#7c3aed',
+  other: '#64748b',
+}
+
+const catBg = {
+  grocery: '#f0fdf4',
+  food: '#fff7ed',
+  fruit: '#fef2f2',
+  bakery: '#fffbeb',
+  dairy: '#eff6ff',
+  stationary: '#f5f3ff',
+  other: '#f8fafc',
+}
 
 const CategoryBannerIcon = ({ category }) => {
   const props = { size: 40, strokeWidth: 1.5 }
+
   const color = catColor[category] || '#64748b'
   const bg = catBg[category] || '#f8fafc'
+
   const icons = {
     grocery: <ShoppingCart {...props} color={color} />,
     food: <UtensilsCrossed {...props} color={color} />,
@@ -913,14 +1555,16 @@ const CategoryBannerIcon = ({ category }) => {
     stationary: <PenLine {...props} color={color} />,
     other: <Package {...props} color={color} />,
   }
+
   return (
-    <div style={{
-      width: 80, height: 80, borderRadius: 24,
-      background: bg,
-      border: `1.5px solid ${color}22`,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      boxShadow: `0 4px 16px ${color}18`
-    }}>
+    <div
+      className="flex h-20 w-20 items-center justify-center rounded-3xl"
+      style={{
+        background: bg,
+        border: `1.5px solid ${color}22`,
+        boxShadow: `0 4px 16px ${color}18`,
+      }}
+    >
       {icons[category] || <Package {...props} color={color} />}
     </div>
   )
@@ -929,7 +1573,9 @@ const CategoryBannerIcon = ({ category }) => {
 export default function Marketplace() {
   const { user, logout } = useAuth()
   const { totalItems, totalPrice } = useCart()
+
   const navigate = useNavigate()
+
   const [shops, setShops] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -939,16 +1585,27 @@ export default function Marketplace() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
+
     window.addEventListener('scroll', onScroll)
+
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  useEffect(() => { getUserLocation() }, [])
-  useEffect(() => { fetchShops() }, [userLocation])
+  useEffect(() => {
+    getUserLocation()
+  }, [])
+
+  useEffect(() => {
+    fetchShops()
+  }, [userLocation])
 
   const getUserLocation = () => {
     navigator.geolocation.getCurrentPosition(
-      pos => setUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+      (pos) =>
+        setUserLocation({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        }),
       () => fetchShops()
     )
   }
@@ -956,205 +1613,99 @@ export default function Marketplace() {
   const fetchShops = async () => {
     try {
       setLoading(true)
+
       const params = {}
+
       if (userLocation) {
         params.latitude = userLocation.latitude
         params.longitude = userLocation.longitude
         params.radius = 10000
       }
+
       const res = await axios.get('/api/shop/all', { params })
+
       setShops(res.data.shops)
-    } catch (err) { console.error(err) }
-    finally { setLoading(false) }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const filteredShops = shops.filter(shop => {
-    const matchSearch = shop.name.toLowerCase().includes(search.toLowerCase()) ||
-      (shop.location?.address || '').toLowerCase().includes(search.toLowerCase())
+  const filteredShops = shops.filter((shop) => {
+    const matchSearch =
+      shop.name.toLowerCase().includes(search.toLowerCase()) ||
+      (shop.location?.address || '')
+        .toLowerCase()
+        .includes(search.toLowerCase())
+
     const matchCat = category === '' || shop.category === category
+
     return matchSearch && matchCat
   })
 
-  const openShops = filteredShops.filter(s => s.isOpen).length
+  const openShops = filteredShops.filter((s) => s.isOpen).length
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fafafa', fontFamily: "'Inter', sans-serif" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+    <div className="min-h-screen bg-slate-50 font-sans">
 
-        /* ── Navbar ── */
-        .navbar {
-          position: sticky; top: 0; z-index: 100;
-          background: rgba(255,255,255,0.95);
-          backdrop-filter: blur(12px);
-          border-bottom: 1px solid #f1f5f9;
-          transition: box-shadow 0.2s;
-        }
-        .navbar.scrolled { box-shadow: 0 2px 24px rgba(0,0,0,0.07); }
-        .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; gap: 20px; }
-        .logo { font-size: 22px; font-weight: 900; color: #0f172a; letter-spacing: -0.8px; flex-shrink: 0; }
-        .logo em { color: #22c55e; font-style: normal; }
+      {/* Navbar */}
 
-        .search-wrap { flex: 1; max-width: 520px; position: relative; }
-        .search-bar { width: 100%; height: 46px; padding: 0 18px 0 48px; border-radius: 14px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; font-family: 'Inter', sans-serif; color: #0f172a; outline: none; transition: all 0.2s; }
-        .search-bar:focus { border-color: #22c55e; background: #fff; box-shadow: 0 0 0 4px rgba(34,197,94,0.1); }
-        .search-bar::placeholder { color: #94a3b8; }
-        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
+      <nav
+        className={`sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur-xl transition-shadow duration-200 ${scrolled
+            ? 'shadow-[0_2px_24px_rgba(0,0,0,0.07)]'
+            : ''
+          }`}
+      >
+        <div className="mx-auto flex h-17 max-w-7xl items-center gap-5 px-6">
 
-        .nav-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-        .nav-btn { display: flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 12px; border: none; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.15s; }
-        .btn-orders { background: #f0fdf4; color: #16a34a; }
-        .btn-orders:hover { background: #dcfce7; }
-        .btn-logout { background: #fef2f2; color: #ef4444; }
-        .btn-logout:hover { background: #fee2e2; }
-        .user-chip { display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border-radius: 100px; border: 1.5px solid #f1f5f9; background: #fff; }
-        .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff; }
-        .user-name { font-size: 13px; font-weight: 600; color: #374151; }
+          <div className="shrink-0 text-2xl font-black tracking-tight text-slate-900">
+            Hyper<span className="text-green-500">local</span>
+          </div>
 
-        .cart-fab { position: fixed; bottom: 28px; right: 28px; z-index: 200; display: flex; align-items: center; gap: 10px; padding: 14px 22px; background: #22c55e; color: #fff; border: none; border-radius: 100px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; box-shadow: 0 8px 24px rgba(34,197,94,0.4); transition: all 0.2s; }
-        .cart-fab:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(34,197,94,0.5); background: #16a34a; }
-        .cart-count { background: #fff; color: #16a34a; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+          <div className="relative max-w-xl flex-1">
 
-        /* ── Hero ── */
-        .hero { background: linear-gradient(135deg, #f0fdf4 0%, #fafffe 40%, #fffbeb 100%); padding: 64px 0 56px; border-bottom: 1px solid #f1f5f9; }
-        .hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
-        .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; color: #16a34a; padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; }
-        .hero-title { font-size: 48px; font-weight: 900; color: #0f172a; line-height: 1.08; letter-spacing: -2px; margin-bottom: 18px; }
-        .hero-title em { color: #22c55e; font-style: normal; }
-        .hero-sub { font-size: 16px; color: #64748b; line-height: 1.6; margin-bottom: 32px; font-weight: 400; max-width: 420px; }
-        .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
-        .hero-btn-primary { padding: 14px 28px; background: #22c55e; color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(34,197,94,0.3); }
-        .hero-btn-primary:hover { background: #16a34a; transform: translateY(-1px); }
-        .hero-btn-secondary { padding: 14px 28px; background: #fff; color: #374151; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
-        .hero-btn-secondary:hover { border-color: #22c55e; color: #22c55e; }
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+              <Search size={18} />
+            </span>
 
-        /* Trust badges */
-        .trust-row { display: flex; gap: 20px; margin-top: 36px; flex-wrap: wrap; }
-        .trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #374151; }
-        .trust-icon-circle { width: 32px; height: 32px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); flex-shrink: 0; }
-
-        /* Hero right — floating cards */
-        .hero-right { display: flex; justify-content: center; align-items: center; position: relative; height: 300px; }
-        .float-card { position: absolute; background: #fff; border-radius: 20px; padding: 16px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; }
-        .float-card-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .float-card-text { font-size: 13px; }
-        .float-card-name { font-weight: 700; color: #0f172a; margin-bottom: 2px; }
-        .float-card-price { font-weight: 600; color: #22c55e; }
-        .float-big { top: 10px; left: 20px; }
-        .float-mid { bottom: 30px; right: 10px; }
-        .float-small { top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .delivery-pill { position: absolute; top: 20px; right: 20px; background: #22c55e; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-        .shops-pill { position: absolute; bottom: 20px; left: 30px; background: #0f172a; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-
-        /* ── Main content ── */
-        .main { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .section-title { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
-        .section-sub { font-size: 14px; color: #94a3b8; margin-top: 3px; }
-        .see-all { font-size: 13px; font-weight: 600; color: #22c55e; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 4px; }
-
-        /* ── Category cards ── */
-        .cat-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; margin-bottom: 48px; }
-        .cat-card { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 8px; border-radius: 20px; border: 2px solid transparent; cursor: pointer; transition: all 0.2s; background: #fff; }
-        .cat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-        .cat-card.active { border-color: currentColor; }
-        .cat-icon-wrap { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .cat-card:hover .cat-icon-wrap { transform: scale(1.08); }
-        .cat-label { font-size: 12px; font-weight: 600; color: #374151; text-align: center; }
-        .cat-card.active .cat-label { font-weight: 700; }
-
-        /* ── Shop cards ── */
-        .shops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
-        .shop-card { background: #fff; border-radius: 20px; overflow: hidden; cursor: pointer; border: 1.5px solid #f1f5f9; transition: all 0.22s; }
-        .shop-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); border-color: transparent; }
-        .shop-banner { height: 110px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .shop-open-tag { position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; }
-        .tag-open { background: rgba(34,197,94,0.15); color: #16a34a; }
-        .tag-closed { background: rgba(239,68,68,0.15); color: #ef4444; }
-        .shop-body { padding: 16px; }
-        .shop-cat-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-        .shop-cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .shop-cat-text { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .shop-name { font-size: 16px; font-weight: 800; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.3px; }
-        .shop-addr-row { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #94a3b8; margin-bottom: 14px; }
-        .shop-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #f8fafc; }
-        .shop-contact { font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 4px; }
-        .view-btn { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #22c55e; background: #f0fdf4; padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
-        .shop-card:hover .view-btn { background: #22c55e; color: #fff; }
-
-        /* Skeleton */
-        .skeleton { background: linear-gradient(90deg, #f8fafc 25%, #f1f5f9 50%, #f8fafc 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 20px; }
-        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-        /* Empty */
-        .empty { text-align: center; padding: 72px 0; }
-        .empty-icon { margin-bottom: 14px; display: flex; justify-content: center; }
-        .empty-title { font-size: 20px; font-weight: 800; color: #374151; margin-bottom: 6px; }
-        .empty-sub { font-size: 14px; color: #94a3b8; }
-
-        /* Promo banner */
-        .promo-banner { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 24px; padding: 32px 40px; margin-bottom: 48px; display: flex; justify-content: space-between; align-items: center; }
-        .promo-text h3 { font-size: 24px; font-weight: 900; color: #fff; letter-spacing: -0.5px; margin-bottom: 6px; }
-        .promo-text p { font-size: 14px; color: #94a3b8; }
-        .promo-badge { background: #22c55e; color: #fff; padding: 6px 16px; border-radius: 100px; font-size: 13px; font-weight: 800; margin-bottom: 12px; display: inline-block; }
-        .promo-btn { padding: 12px 24px; background: #22c55e; color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
-        .promo-btn:hover { background: #16a34a; }
-
-        /* Results bar */
-        .results-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .results-text { font-size: 14px; color: #64748b; font-weight: 500; }
-        .results-text strong { color: #0f172a; }
-        .open-badge { background: #dcfce7; color: #16a34a; padding: 4px 10px; border-radius: 100px; font-size: 12px; font-weight: 700; }
-
-        /* ── Map section ── */
-        .map-section { background: #fff; border-top: 1px solid #f1f5f9; padding: 0; }
-        .map-header { max-width: 1200px; margin: 0 auto; padding: 40px 24px 24px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .map-header-left {}
-        .map-title { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
-        .map-title-icon { width: 36px; height: 36px; background: #f0fdf4; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .map-sub { font-size: 14px; color: #94a3b8; display: flex; align-items: center; gap: 8px; }
-        .map-count-badge { background: #f0fdf4; color: #16a34a; padding: 3px 10px; border-radius: 100px; font-size: 12px; font-weight: 700; }
-        .map-open-btn { display: flex; align-items: center; gap: 6px; padding: 10px 20px; background: #0f172a; color: #fff; border: none; border-radius: 12px; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
-        .map-open-btn:hover { background: #1e293b; transform: translateY(-1px); }
-        .map-frame { width: 100%; height: 380px; border: none; display: block; background: #f1f5f9; filter: grayscale(0.15); }
-        .map-footer { max-width: 1200px; margin: 0 auto; padding: 16px 24px 32px; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #94a3b8; }
-
-        @media (max-width: 768px) {
-          .hero-inner { grid-template-columns: 1fr; }
-          .hero-right { display: none; }
-          .hero-title { font-size: 32px; }
-          .cat-grid { grid-template-columns: repeat(4, 1fr); }
-          .map-header { flex-direction: column; align-items: flex-start; gap: 16px; }
-        }
-      `}</style>
-
-      {/* ── Navbar ── */}
-      <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
-        <div className="nav-inner">
-          <div className="logo">Hyper<em>local</em></div>
-
-          <div className="search-wrap">
-            <span className="search-icon"><Search size={18} /></span>
             <input
-              className="search-bar"
               type="text"
               placeholder="Search for shops, groceries, bakery..."
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
+              className="h-11.5 w-full rounded-xl border-2 border-slate-100 bg-slate-50 pl-12 pr-4 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-green-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(34,197,94,0.1)]"
             />
           </div>
 
-          <div className="nav-actions">
-            <button className="nav-btn btn-orders" onClick={() => navigate('/customer/orders')}>
+          <div className="ml-auto hidden items-center gap-3 md:flex">
+
+            <button
+              onClick={() => navigate('/customer/orders')}
+              className="flex items-center gap-2 rounded-xl bg-green-50 px-4 py-2 text-sm font-semibold text-green-600 transition hover:bg-green-100"
+            >
               <ClipboardList size={15} />
               My Orders
             </button>
-            <div className="user-chip">
-              <div className="avatar">{user?.name?.[0]?.toUpperCase()}</div>
-              <span className="user-name">{user?.name?.split(' ')[0]}</span>
+
+            <div className="flex items-center gap-2 rounded-full border border-slate-100 bg-white px-3 py-1.5">
+
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-green-400 to-green-600 text-sm font-extrabold text-white">
+                {user?.name?.[0]?.toUpperCase()}
+              </div>
+
+              <span className="text-sm font-semibold text-slate-700">
+                {user?.name?.split(' ')[0]}
+              </span>
             </div>
-            <button className="nav-btn btn-logout" onClick={() => { logout(); navigate('/login') }}>
+
+            <button
+              onClick={() => {
+                logout()
+                navigate('/login')
+              }}
+              className="flex items-center gap-2 rounded-xl bg-red-50 px-4 py-2 text-sm font-semibold text-red-500 transition hover:bg-red-100"
+            >
               <LogOut size={14} />
               Logout
             </button>
@@ -1162,287 +1713,205 @@ export default function Marketplace() {
         </div>
       </nav>
 
-      {/* ── Hero ── */}
-      <section className="hero">
-        <div className="hero-inner">
+      {/* Hero */}
+
+      <section className="border-b border-slate-100 bg-[linear-gradient(135deg,#f0fdf4_0%,#fafffe_40%,#fffbeb_100%)] py-16">
+
+        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 md:grid-cols-2">
+
           <div>
-            <div className="hero-tag">
-              <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4" /></svg>
-              {userLocation ? 'Shops near you · 10km radius' : 'Your local marketplace'}
+
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-green-600">
+              <div className="h-2 w-2 rounded-full bg-current" />
+
+              {userLocation
+                ? 'Shops near you · 10km radius'
+                : 'Your local marketplace'}
             </div>
-            <h1 className="hero-title">
-              Everything you need,<br />
-              delivered <em>fast</em>.
+
+            <h1 className="mb-5 text-4xl font-black leading-tight tracking-tight text-slate-900 md:text-5xl">
+              Everything you need,
+              <br />
+              delivered <span className="text-green-500">fast</span>.
             </h1>
-            <p className="hero-sub">
-              Groceries, fruits, dairy, bakery and daily essentials from verified local shops near you.
+
+            <p className="mb-8 max-w-md text-base leading-7 text-slate-500">
+              Groceries, fruits, dairy, bakery and daily essentials from
+              verified local shops near you.
             </p>
-            <div className="hero-btns">
+
+            <div className="flex flex-wrap gap-3">
+
               <button
-                className="hero-btn-primary"
-                onClick={() => document.getElementById('shops-section').scrollIntoView({ behavior: 'smooth' })}
+                onClick={() =>
+                  document
+                    .getElementById('shops-section')
+                    .scrollIntoView({ behavior: 'smooth' })
+                }
+                className="rounded-xl bg-green-500 px-7 py-3.5 text-sm font-bold text-white shadow-[0_4px_16px_rgba(34,197,94,0.3)] transition hover:-translate-y-0.5 hover:bg-green-600"
               >
                 Start Shopping →
               </button>
+
               <button
-                className="hero-btn-secondary"
-                onClick={() => document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' })}
+                onClick={() =>
+                  document
+                    .getElementById('map-section')
+                    .scrollIntoView({ behavior: 'smooth' })
+                }
+                className="rounded-xl border-2 border-slate-200 bg-white px-7 py-3.5 text-sm font-bold text-slate-700 transition hover:border-green-500 hover:text-green-500"
               >
                 Explore on Map
               </button>
             </div>
 
-            {/* Trust badges — Lucide icons */}
-            <div className="trust-row">
+            <div className="mt-9 flex flex-wrap gap-5">
+
               {[
-                { Icon: BadgeCheck, text: 'Verified local shops', color: '#16a34a' },
-                { Icon: Zap, text: 'Fast delivery', color: '#d97706' },
-                { Icon: ShieldCheck, text: 'Secure payments', color: '#2563eb' },
+                {
+                  Icon: BadgeCheck,
+                  text: 'Verified local shops',
+                  color: '#16a34a',
+                },
+                {
+                  Icon: Zap,
+                  text: 'Fast delivery',
+                  color: '#d97706',
+                },
+                {
+                  Icon: ShieldCheck,
+                  text: 'Secure payments',
+                  color: '#2563eb',
+                },
               ].map(({ Icon, text, color }, i) => (
-                <div key={i} className="trust-badge">
-                  <div className="trust-icon-circle">
+                <div
+                  key={i}
+                  className="flex items-center gap-2 text-sm font-semibold text-slate-700"
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white shadow-sm">
                     <Icon size={16} color={color} strokeWidth={2} />
                   </div>
+
                   {text}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Floating cards — Lucide icons */}
-          <div className="hero-right">
-            <div className="delivery-pill">
+          <div className="relative hidden h-75 items-center justify-center md:flex">
+
+            <div className="absolute right-5 top-5 flex items-center gap-1.5 rounded-full bg-green-500 px-4 py-2 text-xs font-bold text-white">
               <Zap size={12} />
               10 min delivery
             </div>
 
-            <div className="float-card float-big">
-              <div className="float-card-icon" style={{ background: '#f0fdf4', boxShadow: '0 4px 12px rgba(34,197,94,0.15)' }}>
-                <ShoppingBasket size={26} color="#16a34a" strokeWidth={1.8} />
-              </div>
-              <div className="float-card-text">
-                <div className="float-card-name">Fresh Groceries</div>
-                <div className="float-card-price">From ₹49</div>
-              </div>
-            </div>
+            <div className="absolute left-5 top-2 flex items-center gap-3 rounded-2xl border border-slate-100 bg-white px-5 py-4 shadow-xl">
 
-            <div className="float-card float-small">
-              <div className="float-card-icon" style={{ background: '#eff6ff', boxShadow: '0 4px 12px rgba(37,99,235,0.12)' }}>
-                <Milk size={26} color="#2563eb" strokeWidth={1.8} />
+              <div
+                className="flex h-12 w-12 items-center justify-center rounded-xl"
+                style={{
+                  background: '#f0fdf4',
+                  boxShadow: '0 4px 12px rgba(34,197,94,0.15)',
+                }}
+              >
+                <ShoppingBasket
+                  size={26}
+                  color="#16a34a"
+                  strokeWidth={1.8}
+                />
               </div>
-              <div className="float-card-text">
-                <div className="float-card-name">Dairy Products</div>
-                <div className="float-card-price">From ₹25</div>
-              </div>
-            </div>
 
-            <div className="float-card float-mid">
-              <div className="float-card-icon" style={{ background: '#fef2f2', boxShadow: '0 4px 12px rgba(220,38,38,0.12)' }}>
-                <Apple size={26} color="#dc2626" strokeWidth={1.8} />
-              </div>
-              <div className="float-card-text">
-                <div className="float-card-name">Fresh Fruits</div>
-                <div className="float-card-price">From ₹35</div>
-              </div>
-            </div>
+              <div>
+                <div className="mb-0.5 text-sm font-bold text-slate-900">
+                  Fresh Groceries
+                </div>
 
-            <div className="shops-pill">
-              <MapPin size={12} />
-              {shops.length} shops nearby
+                <div className="text-sm font-semibold text-green-500">
+                  From ₹49
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Main content ── */}
-      <div className="main">
+      {/* Main */}
 
-        {/* ── Category cards ── */}
-        <div style={{ marginBottom: 48 }}>
-          <div className="section-header">
+      <div className="mx-auto max-w-7xl px-6 py-12">
+
+        <div className="mb-12">
+
+          <div className="mb-6 flex items-center justify-between">
+
             <div>
-              <div className="section-title">Shop by Category</div>
-              <div className="section-sub">What are you looking for today?</div>
+              <h2 className="text-2xl font-extrabold tracking-tight text-slate-900">
+                Shop by Category
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-400">
+                What are you looking for today?
+              </p>
             </div>
           </div>
-          <div className="cat-grid">
-            {CATEGORIES.map(cat => (
+
+          <div className="grid grid-cols-4 gap-3 md:grid-cols-8">
+
+            {CATEGORIES.map((cat) => (
               <div
                 key={cat.id}
-                className={`cat-card${category === cat.id ? ' active' : ''}`}
-                style={{ color: cat.color, borderColor: category === cat.id ? cat.color : 'transparent' }}
                 onClick={() => setCategory(cat.id)}
+                className="group flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 bg-white px-2 py-5 transition-all hover:-translate-y-1 hover:shadow-xl"
+                style={{
+                  color: cat.color,
+                  borderColor:
+                    category === cat.id
+                      ? cat.color
+                      : 'transparent',
+                }}
               >
                 <div
-                  className="cat-icon-wrap"
-                  style={{ background: category === cat.id ? cat.color : cat.bg, color: category === cat.id ? '#fff' : cat.color }}
+                  className="flex h-13 w-13 items-center justify-center rounded-2xl transition-transform group-hover:scale-105"
+                  style={{
+                    background:
+                      category === cat.id
+                        ? cat.color
+                        : cat.bg,
+
+                    color:
+                      category === cat.id
+                        ? '#fff'
+                        : cat.color,
+                  }}
                 >
                   {cat.icon}
                 </div>
-                <span className="cat-label">{cat.label}</span>
+
+                <span className="text-center text-xs font-semibold text-slate-700">
+                  {cat.label}
+                </span>
               </div>
             ))}
           </div>
         </div>
-
-        {/* ── Promo banner ── */}
-        <div className="promo-banner">
-          <div className="promo-text">
-            <div className="promo-badge">Limited Time</div>
-            <h3>Free delivery on your first order</h3>
-            <p>Use code HYPERLOCAL at checkout</p>
-          </div>
-          <button className="promo-btn" onClick={() => document.getElementById('shops-section').scrollIntoView({ behavior: 'smooth' })}>
-            Order Now →
-          </button>
-        </div>
-
-        {/* ── Shops section ── */}
-        <div id="shops-section">
-          <div className="results-bar">
-            <div>
-              <div className="section-title">
-                {category ? `${CATEGORIES.find(c => c.id === category)?.label} Shops` : 'Nearby Shops'}
-              </div>
-              {!loading && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
-                  <span className="results-text">
-                    <strong>{filteredShops.length}</strong> shops found
-                  </span>
-                  <span className="open-badge">{openShops} open now</span>
-                </div>
-              )}
-            </div>
-            {category && (
-              <button className="see-all" onClick={() => setCategory('')}>
-                View all
-                <ChevronRight size={14} />
-              </button>
-            )}
-          </div>
-
-          {loading ? (
-            <div className="shops-grid">
-              {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="skeleton" style={{ height: 220 }} />
-              ))}
-            </div>
-          ) : filteredShops.length === 0 ? (
-            <div className="empty">
-              <div className="empty-icon"><Search size={48} color="#cbd5e1" strokeWidth={1.5} /></div>
-              <p className="empty-title">No shops found</p>
-              <p className="empty-sub">Try a different category or clear your search</p>
-            </div>
-          ) : (
-            <div className="shops-grid">
-              {filteredShops.map(shop => (
-                <div
-                  key={shop._id}
-                  className="shop-card"
-                  onClick={() => navigate(`/shop/${shop._id}`)}
-                >
-                  {/* Banner — SVG icon, no emoji */}
-                  <div
-                    className="shop-banner"
-                    style={{ background: `linear-gradient(135deg, ${catBg[shop.category] || '#f8fafc'}, #fff)` }}
-                  >
-                    <CategoryBannerIcon category={shop.category} />
-                    <span className={`shop-open-tag ${shop.isOpen ? 'tag-open' : 'tag-closed'}`}>
-                      {shop.isOpen ? '● Open' : '● Closed'}
-                    </span>
-                  </div>
-
-                  {/* Body */}
-                  <div className="shop-body">
-                    <div className="shop-cat-row">
-                      <div className="shop-cat-dot" style={{ background: catColor[shop.category] || '#64748b' }} />
-                      <span className="shop-cat-text" style={{ color: catColor[shop.category] || '#64748b' }}>
-                        {shop.category}
-                      </span>
-                    </div>
-                    <div className="shop-name">{shop.name}</div>
-                    <div className="shop-addr-row">
-                      <MapPin size={11} />
-                      {shop.location?.address || 'Location not set'}
-                    </div>
-                    <div className="shop-footer">
-                      <div className="shop-contact">
-                        <Phone size={11} />
-                        {shop.contact}
-                      </div>
-                      <button className="view-btn">
-                        View Shop
-                        <ChevronRight size={11} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
 
-      {/* ── Map section — full width at bottom ── */}
-      <section id="map-section" className="map-section">
-        <div className="map-header">
-          <div className="map-header-left">
-            <div className="map-title">
-              <div className="map-title-icon">
-                <MapPin size={18} color="#22c55e" strokeWidth={2} />
-              </div>
-              Nearby on Map
-            </div>
-            <div className="map-sub">
-              <span className="map-count-badge">{shops.length} shops</span>
-              within 10 km of your location
-            </div>
-          </div>
-          <button className="map-open-btn" onClick={() => navigate('/nearby')}>
-            <MapPin size={15} />
-            Open full map
-            <ChevronRight size={14} />
-          </button>
-        </div>
+      {/* Floating Cart */}
 
-        {userLocation ? (
-          <iframe
-            className="map-frame"
-            title="Nearby shops map"
-            src={`https://www.openstreetmap.org/export/embed.html?bbox=${userLocation.longitude - 0.05},${userLocation.latitude - 0.05},${userLocation.longitude + 0.05},${userLocation.latitude + 0.05}&layer=mapnik&marker=${userLocation.latitude},${userLocation.longitude}`}
-            allowFullScreen
-          />
-        ) : (
-          <div className="map-frame" style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            gap: 12, background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)'
-          }}>
-            <div style={{ width: 56, height: 56, borderRadius: 16, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
-              <MapPin size={26} color="#94a3b8" strokeWidth={1.5} />
-            </div>
-            <p style={{ fontSize: 15, fontWeight: 700, color: '#374151' }}>Location access needed</p>
-            <p style={{ fontSize: 13, color: '#94a3b8' }}>Allow location to see shops near you on the map</p>
-            <button
-              onClick={getUserLocation}
-              style={{ marginTop: 4, padding: '10px 22px', background: '#22c55e', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 700, fontFamily: 'Inter, sans-serif', cursor: 'pointer' }}
-            >
-              Enable Location
-            </button>
-          </div>
-        )}
-
-        <div className="map-footer">
-          <MapPin size={12} />
-          Map data © OpenStreetMap contributors
-        </div>
-      </section>
-
-      {/* ── Floating Cart ── */}
       {totalItems > 0 && (
-        <button className="cart-fab" onClick={() => navigate('/cart')}>
+        <button
+          onClick={() => navigate('/cart')}
+          className="fixed bottom-7 right-7 z-200 flex items-center gap-3 rounded-full bg-green-500 px-5 py-3.5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(34,197,94,0.4)] transition hover:-translate-y-0.5 hover:bg-green-600"
+        >
           <ShoppingBag size={18} />
-          <span>{totalItems} item{totalItems > 1 ? 's' : ''} · ₹{totalPrice}</span>
-          <div className="cart-count">{totalItems}</div>
+
+          <span>
+            {totalItems} item{totalItems > 1 ? 's' : ''} · ₹
+            {totalPrice}
+          </span>
+
+          <div className="flex h-5.5 w-5.5 items-center justify-center rounded-full bg-white text-xs font-extrabold text-green-600">
+            {totalItems}
+          </div>
         </button>
       )}
     </div>
