@@ -1530,11 +1530,11 @@ export default function Marketplace() {
               within 10 km of your location
             </div>
           </div>
-          <button className="map-open-btn" onClick={() => navigate('/nearby')}>
+          {/* <button className="map-open-btn" onClick={() => navigate('/nearby')}>
             <MapPin size={15} />
             Open full map
             <ChevronRight size={14} />
-          </button>
+          </button> */}
         </div>
         <MapPanel
           userLocation={userLocation}
