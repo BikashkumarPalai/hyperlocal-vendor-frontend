@@ -885,6 +885,28 @@ import {
   ShoppingCart, UtensilsCrossed, Grape, Croissant, Package, PenLine, LayoutGrid,
   MapPin, Search, LogOut, ClipboardList, ChevronRight, Phone, ShoppingBag
 } from 'lucide-react'
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet'
+import { createPortal } from 'react-dom'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
+delete L.Icon.Default.prototype._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+})
+
+const shopIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34],
+})
+const userIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34],
+})
 
 const CATEGORIES = [
   { id: '', label: 'All', color: '#0f172a', bg: '#f1f5f9', icon: <LayoutGrid size={22} /> },
@@ -926,6 +948,109 @@ const CategoryBannerIcon = ({ category }) => {
   )
 }
 
+
+const RecenterMap = ({ lat, lng }) => {
+  const map = useMap()
+  useEffect(() => { if (lat && lng) map.setView([lat, lng], 13) }, [lat, lng])
+  return null
+}
+
+const MapResizer = ({ expanded }) => {
+  const map = useMap()
+  useEffect(() => {
+    const t = setTimeout(() => map.invalidateSize(), 300)
+    return () => clearTimeout(t)
+  }, [expanded])
+  return null
+}
+const MapPanel = ({ userLocation, filteredShops, mapExpanded, setMapExpanded, navigate }) => {
+  const mapEl = (
+    <MapContainer
+      center={userLocation ? [userLocation.latitude, userLocation.longitude] : [20.5937, 78.9629]}
+      zoom={13}
+      style={{ height: '100%', width: '100%' }}
+    >
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' />
+      {userLocation && <RecenterMap lat={userLocation.latitude} lng={userLocation.longitude} />}
+      <MapResizer expanded={mapExpanded} />
+      {userLocation && (
+        <>
+          <Marker position={[userLocation.latitude, userLocation.longitude]} icon={userIcon}>
+            <Popup>📍 You are here</Popup>
+          </Marker>
+          <Circle
+            center={[userLocation.latitude, userLocation.longitude]}
+            radius={10000}
+            pathOptions={{ color: '#22c55e', fillColor: '#22c55e', fillOpacity: 0.04, weight: 1.5 }}
+          />
+        </>
+      )}
+      {filteredShops.map(shop => shop.location?.coordinates && (
+        <Marker key={shop._id} position={[shop.location.coordinates[1], shop.location.coordinates[0]]} icon={shopIcon}>
+          <Popup>
+            <div style={{ minWidth: 160, padding: 6, fontFamily: 'Inter, sans-serif' }}>
+              <p style={{ fontWeight: 700, fontSize: 14, marginBottom: 3 }}>{shop.name}</p>
+              <p style={{ fontSize: 12, color: catColor[shop.category] || '#64748b', marginBottom: 3 }}>
+                {shop.category}
+              </p>
+              <p style={{ fontSize: 12, color: '#64748b', marginBottom: 10 }}>{shop.location?.address}</p>
+              <button
+                onClick={() => navigate(`/shop/${shop._id}`)}
+                style={{ background: '#22c55e', color: 'white', border: 'none', padding: '7px 14px', borderRadius: 8, fontSize: 12, cursor: 'pointer', width: '100%', fontWeight: 600 }}
+              >
+                View Shop →
+              </button>
+            </div>
+          </Popup>
+        </Marker>
+      ))}
+    </MapContainer>
+  )
+
+  const header = (
+    <div style={{ background: '#fff', padding: '12px 16px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ width: 28, height: 28, borderRadius: 8, background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <MapPin size={14} color="#22c55e" />
+      </div>
+      <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', fontFamily: 'Inter, sans-serif' }}>Live Map</span>
+      <span style={{ fontSize: 12, color: '#94a3b8', marginLeft: 'auto', marginRight: 10, fontFamily: 'Inter, sans-serif' }}>
+        {filteredShops.filter(s => s.location?.coordinates).length} shops
+      </span>
+      <button
+        onClick={() => setMapExpanded(v => !v)}
+        style={{ background: mapExpanded ? '#f1f5f9' : '#f0fdf4', border: 'none', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 700, color: mapExpanded ? '#374151' : '#22c55e', fontFamily: 'Inter, sans-serif' }}
+      >
+        {mapExpanded ? '✕ Close' : '⛶ Expand'}
+      </button>
+    </div>
+  )
+
+  if (mapExpanded) return createPortal(
+    <>
+      <div onClick={() => setMapExpanded(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 998 }} />
+      <div style={{ position: 'fixed', inset: 0, zIndex: 999, display: 'flex', flexDirection: 'column', background: '#fff' }}>
+        {header}
+        <div style={{ flex: 1 }}>{mapEl}</div>
+      </div>
+    </>,
+    document.body
+  )
+
+  return (
+    <div style={{ borderRadius: 0, overflow: 'hidden' }}>
+      {header}
+      <div style={{ height: 380 }}>
+        {userLocation ? mapEl : (
+          <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, background: '#f8fafc' }}>
+            <MapPin size={36} color="#cbd5e1" strokeWidth={1.5} />
+            <p style={{ fontSize: 13, color: '#94a3b8', fontFamily: 'Inter, sans-serif' }}>Enable location to see map</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function Marketplace() {
   const { user, logout } = useAuth()
   const { totalItems, totalPrice } = useCart()
@@ -936,6 +1061,7 @@ export default function Marketplace() {
   const [category, setCategory] = useState('')
   const [userLocation, setUserLocation] = useState(null)
   const [scrolled, setScrolled] = useState(false)
+  const [mapExpanded, setMapExpanded] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
@@ -945,6 +1071,12 @@ export default function Marketplace() {
 
   useEffect(() => { getUserLocation() }, [])
   useEffect(() => { fetchShops() }, [userLocation])
+
+  useEffect(() => {
+    document.body.style.overflow = mapExpanded ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [mapExpanded])
+
 
   const getUserLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -962,7 +1094,7 @@ export default function Marketplace() {
         params.longitude = userLocation.longitude
         params.radius = 10000
       }
-      const res = await axios.get('/api/shop/all', { params })
+      const res = await axios.get('/api/shop/all', { params })   // Axios automaticaly convert the paramas into URL
       setShops(res.data.shops)
     } catch (err) { console.error(err) }
     finally { setLoading(false) }
@@ -1404,37 +1536,13 @@ export default function Marketplace() {
             <ChevronRight size={14} />
           </button>
         </div>
-
-        {userLocation ? (
-          <iframe
-            className="map-frame"
-            title="Nearby shops map"
-            src={`https://www.openstreetmap.org/export/embed.html?bbox=${userLocation.longitude - 0.05},${userLocation.latitude - 0.05},${userLocation.longitude + 0.05},${userLocation.latitude + 0.05}&layer=mapnik&marker=${userLocation.latitude},${userLocation.longitude}`}
-            allowFullScreen
-          />
-        ) : (
-          <div className="map-frame" style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            gap: 12, background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)'
-          }}>
-            <div style={{ width: 56, height: 56, borderRadius: 16, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
-              <MapPin size={26} color="#94a3b8" strokeWidth={1.5} />
-            </div>
-            <p style={{ fontSize: 15, fontWeight: 700, color: '#374151' }}>Location access needed</p>
-            <p style={{ fontSize: 13, color: '#94a3b8' }}>Allow location to see shops near you on the map</p>
-            <button
-              onClick={getUserLocation}
-              style={{ marginTop: 4, padding: '10px 22px', background: '#22c55e', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 700, fontFamily: 'Inter, sans-serif', cursor: 'pointer' }}
-            >
-              Enable Location
-            </button>
-          </div>
-        )}
-
-        <div className="map-footer">
-          <MapPin size={12} />
-          Map data © OpenStreetMap contributors
-        </div>
+        <MapPanel
+          userLocation={userLocation}
+          filteredShops={filteredShops}
+          mapExpanded={mapExpanded}
+          setMapExpanded={setMapExpanded}
+          navigate={navigate}
+        />
       </section>
 
       {/* ── Floating Cart ── */}
@@ -1448,6 +1556,3 @@ export default function Marketplace() {
     </div>
   )
 }
-
-
-
