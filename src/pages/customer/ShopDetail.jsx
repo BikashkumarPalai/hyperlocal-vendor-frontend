@@ -712,7 +712,7 @@ const ShopDetail = () => {
               </div>
             </div>
 
-            {/* Horizontal rail */}
+            {/*  rail */}
             <div className="horizontal-scroll" style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8 }}>
               {popularProducts.map((product, index) => {
                 const cartItem = getCartItem(product._id)
@@ -800,7 +800,7 @@ const ShopDetail = () => {
         </div>
       </div>
 
-      {/* ── Floating Cart ── */}
+      {/* ── Floating  ── */}
       {totalItems > 0 && (
         <div style={{
           position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
