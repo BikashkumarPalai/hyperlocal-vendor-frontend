@@ -222,7 +222,6 @@ const CAT_CONFIG = {
 
 const getCat = (cat) => CAT_CONFIG[cat] || CAT_CONFIG.other
 
-/* ─── Stock badge ─── */
 const StockBadge = ({ stock }) => {
   if (stock === 0) return (
     <span style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', background: '#fef2f2', padding: '2px 8px', borderRadius: 100 }}>
@@ -241,7 +240,6 @@ const StockBadge = ({ stock }) => {
   )
 }
 
-/* ─── Product badges ─── */
 const BADGES = ['Popular', 'Fresh', 'Best Seller']
 const getProductBadge = (product, index) => {
   if (product.stock === 0) return null
@@ -372,7 +370,7 @@ const ProductCard = ({ product, index, cartItem, onAdd, onIncrease, onDecrease }
   )
 }
 
-/* ─── Main Component ─── */
+/* ─── Main  ─── */
 const ShopDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
