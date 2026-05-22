@@ -196,7 +196,7 @@
 
 
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
 import { useCart } from '../../context/CartContext'
@@ -211,13 +211,13 @@ import {
 
 /* ─── Category config ─── */
 const CAT_CONFIG = {
-  grocery:    { color: '#16a34a', bg: '#f0fdf4', label: 'Grocery' },
-  food:       { color: '#ea580c', bg: '#fff7ed', label: 'Food' },
-  fruit:      { color: '#dc2626', bg: '#fef2f2', label: 'Fruits' },
-  bakery:     { color: '#d97706', bg: '#fffbeb', label: 'Bakery' },
-  dairy:      { color: '#2563eb', bg: '#eff6ff', label: 'Dairy' },
+  grocery: { color: '#16a34a', bg: '#f0fdf4', label: 'Grocery' },
+  food: { color: '#ea580c', bg: '#fff7ed', label: 'Food' },
+  fruit: { color: '#dc2626', bg: '#fef2f2', label: 'Fruits' },
+  bakery: { color: '#d97706', bg: '#fffbeb', label: 'Bakery' },
+  dairy: { color: '#2563eb', bg: '#eff6ff', label: 'Dairy' },
   stationary: { color: '#7c3aed', bg: '#f5f3ff', label: 'Stationery' },
-  other:      { color: '#64748b', bg: '#f8fafc', label: 'Other' },
+  other: { color: '#64748b', bg: '#f8fafc', label: 'Other' },
 }
 
 const getCat = (cat) => CAT_CONFIG[cat] || CAT_CONFIG.other
@@ -316,13 +316,13 @@ const ProductCard = ({ product, index, cartItem, onAdd, onIncrease, onDecrease }
         fontSize: 24
       }}>
         {product.category === 'dairy' ? '🥛' :
-         product.category === 'fruit' ? '🍎' :
-         product.category === 'bakery' ? '🥐' :
-         product.category === 'food' ? '🍱' :
-         product.name.toLowerCase().includes('rice') ? '🌾' :
-         product.name.toLowerCase().includes('oil') ? '🫙' :
-         product.name.toLowerCase().includes('milk') ? '🥛' :
-         '🛒'}
+          product.category === 'fruit' ? '🍎' :
+            product.category === 'bakery' ? '🥐' :
+              product.category === 'food' ? '🍱' :
+                product.name.toLowerCase().includes('rice') ? '🌾' :
+                  product.name.toLowerCase().includes('oil') ? '🫙' :
+                    product.name.toLowerCase().includes('milk') ? '🥛' :
+                      '🛒'}
       </div>
 
       <div style={{ flex: 1 }}>
@@ -554,11 +554,11 @@ const ShopDetail = () => {
                 flexShrink: 0, fontSize: 36
               }}>
                 {shop.category === 'grocery' ? '🛒' :
-                 shop.category === 'food' ? '🍱' :
-                 shop.category === 'fruit' ? '🍎' :
-                 shop.category === 'bakery' ? '🥐' :
-                 shop.category === 'dairy' ? '🥛' :
-                 shop.category === 'stationary' ? '📚' : '🏪'}
+                  shop.category === 'food' ? '🍱' :
+                    shop.category === 'fruit' ? '🍎' :
+                      shop.category === 'bakery' ? '🥐' :
+                        shop.category === 'dairy' ? '🥛' :
+                          shop.category === 'stationary' ? '📚' : '🏪'}
               </div>
 
               <div style={{ flex: 1 }}>
@@ -729,8 +729,8 @@ const ShopDetail = () => {
                   }}>
                     <div style={{ fontSize: 28, marginBottom: 8 }}>
                       {product.name.toLowerCase().includes('milk') ? '🥛' :
-                       product.name.toLowerCase().includes('rice') ? '🌾' :
-                       product.name.toLowerCase().includes('oil') ? '🫙' : '🛒'}
+                        product.name.toLowerCase().includes('rice') ? '🌾' :
+                          product.name.toLowerCase().includes('oil') ? '🫙' : '🛒'}
                     </div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', marginBottom: 4 }}>
                       {product.name}
