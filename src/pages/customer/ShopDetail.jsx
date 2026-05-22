@@ -763,7 +763,7 @@ const ShopDetail = () => {
           </div>
         )}
 
-        {/* ── All Products ── */}
+        {/* ── All  ── */}
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
             <div>
