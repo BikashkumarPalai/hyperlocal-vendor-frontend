@@ -195,6 +195,8 @@
 
 
 
+
+
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
@@ -207,21 +209,46 @@ const catIcon = {
   bakery: '🥐', dairy: '🥛', stationary: '📚', other: '🏪'
 }
 
+const productIcon = (name) => {
+  const n = name.toLowerCase()
+  if (n.includes('milk')) return '🥛'
+  if (n.includes('paneer')) return '🧀'
+  if (n.includes('curd') || n.includes('yogurt')) return '🫙'
+  if (n.includes('butter')) return '🧈'
+  if (n.includes('rice')) return '🍚'
+  if (n.includes('dal') || n.includes('lentil')) return '🫘'
+  if (n.includes('bread')) return '🍞'
+  if (n.includes('egg')) return '🥚'
+  if (n.includes('oil')) return '🫒'
+  if (n.includes('sugar')) return '🍬'
+  if (n.includes('salt')) return '🧂'
+  if (n.includes('tomato')) return '🍅'
+  if (n.includes('onion')) return '🧅'
+  if (n.includes('potato')) return '🥔'
+  if (n.includes('banana')) return '🍌'
+  if (n.includes('apple')) return '🍎'
+  if (n.includes('mango')) return '🥭'
+  if (n.includes('water') || n.includes('drink')) return '💧'
+  if (n.includes('juice')) return '🧃'
+  if (n.includes('biscuit') || n.includes('cookie')) return '🍪'
+  if (n.includes('chips') || n.includes('snack')) return '🍿'
+  return '📦'
+}
+
 const ShopDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user, logout } = useAuth()
-  const { cart, addToCart, totalItems, totalPrice } = useCart()
+  const { cart, addToCart, updateQuantity, totalItems, totalPrice } = useCart()
   const [shop, setShop] = useState(null)
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [added, setAdded] = useState({})
   const [distance, setDistance] = useState(null)
   const [search, setSearch] = useState('')
+  const [activeCategory, setActiveCategory] = useState('All')
 
-  useEffect(() => {
-    fetchShopData()
-  }, [id])
+  useEffect(() => { fetchShopData() }, [id])
 
   const fetchShopData = async () => {
     try {
@@ -257,317 +284,318 @@ const ShopDetail = () => {
   const handleAddToCart = (product) => {
     addToCart(product, id)
     setAdded(prev => ({ ...prev, [product._id]: true }))
-    setTimeout(() => {
-      setAdded(prev => ({ ...prev, [product._id]: false }))
-    }, 1000)
+    setTimeout(() => setAdded(prev => ({ ...prev, [product._id]: false })), 1000)
   }
 
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
+  const handleLogout = () => { logout(); navigate('/login') }
+
+  const getCartQty = (productId) => {
+    const item = cart.find(i => i._id === productId)
+    return item ? item.quantity : 0
   }
 
-  const stockStatus = (stock) => {
-    if (stock === 0) return { label: 'Out of Stock', cls: 'stock-out' }
-    if (stock <= 5) return { label: 'Low Stock', cls: 'stock-low' }
-    return { label: 'In Stock', cls: 'stock-in' }
-  }
+  const categories = ['All', ...new Set(products.map(p => p.unit).filter(Boolean))]
 
-  const filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  )
+  const filteredProducts = products.filter(p => {
+    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase())
+    const matchCat = activeCategory === 'All' || p.unit === activeCategory
+    return matchSearch && matchCat
+  })
+
+  const inStockCount = products.filter(p => p.stock > 0).length
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f0' }}>
-        <p style={{ color: '#999', fontFamily: 'DM Sans, sans-serif' }}>Loading...</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-3 animate-bounce">🛒</div>
+          <p className="text-gray-400 text-sm font-medium">Loading shop...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f5f5f0', fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="min-h-screen bg-gray-50">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Sans', sans-serif; }
 
-        .sd-nav {
-          background: #fff;
-          border-bottom: 1px solid #ebebeb;
-          padding: 0 24px;
-          height: 60px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+        .qty-btn {
+          width: 28px; height: 28px; border-radius: 8px; border: none;
+          font-size: 16px; font-weight: 700; cursor: pointer;
+          display: flex; align-items: center; justify-content: center;
+          transition: all 0.15s; line-height: 1;
+        }
+        .qty-minus { background: #f1f5f9; color: #374151; }
+        .qty-minus:hover { background: #e2e8f0; }
+        .qty-plus { background: #16a34a; color: #fff; }
+        .qty-plus:hover { background: #15803d; }
+
+        .pill-scroll::-webkit-scrollbar { display: none; }
+
+        .product-card { transition: box-shadow 0.15s, transform 0.15s; }
+        .product-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
+
+        .cart-bar-enter {
+          animation: slideUp 0.25s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes slideUp {
+          from { transform: translateY(100px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+
+        .sticky-search {
           position: sticky;
-          top: 0;
-          z-index: 50;
+          top: 60px;
+          z-index: 20;
+          background: #f9fafb;
+          padding: 10px 0 8px;
         }
-        .sd-logo { font-size: 17px; font-weight: 700; color: #1a1a1a; letter-spacing: -0.4px; }
-        .sd-logo em { color: #22c55e; font-style: normal; }
-        .sd-nav-right { display: flex; align-items: center; gap: 8px; }
-        .sd-user { font-size: 13px; color: #666; }
-        .sd-logout {
-          font-size: 13px; font-weight: 600; color: #ef4444;
-          background: #fef2f2; border: none; padding: 6px 14px;
-          border-radius: 8px; cursor: pointer; font-family: 'DM Sans', sans-serif;
-          transition: background 0.15s;
-        }
-        .sd-logout:hover { background: #fee2e2; }
-
-        .sd-wrap { max-width: 720px; margin: 0 auto; padding: 20px 20px 120px; }
-
-        .sd-back {
-          display: inline-flex; align-items: center; gap: 5px;
-          font-size: 13px; font-weight: 500; color: #888;
-          background: none; border: none; cursor: pointer;
-          font-family: 'DM Sans', sans-serif; margin-bottom: 16px; padding: 0;
-          transition: color 0.15s;
-        }
-        .sd-back:hover { color: #1a1a1a; }
-
-        /* Shop Header */
-        .sd-header {
-          background: #fff;
-          border-radius: 16px;
-          border: 1px solid #ebebeb;
-          padding: 22px;
-          margin-bottom: 12px;
-        }
-        .sd-header-top {
-          display: flex;
-          align-items: flex-start;
-          justify-content: space-between;
-          margin-bottom: 12px;
-        }
-        .sd-header-left { display: flex; align-items: flex-start; gap: 14px; flex: 1; }
-        .sd-icon-wrap {
-          width: 54px; height: 54px; border-radius: 14px;
-          background: #f0fdf4; display: flex; align-items: center;
-          justify-content: center; font-size: 24px; flex-shrink: 0;
-        }
-        .sd-name { font-size: 20px; font-weight: 700; color: #1a1a1a; letter-spacing: -0.4px; margin-bottom: 5px; }
-        .sd-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .sd-meta-item { font-size: 13px; color: #666; font-weight: 500; }
-        .sd-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; display: inline-block; }
-        .sd-open-badge {
-          padding: 5px 12px; border-radius: 100px;
-          font-size: 12px; font-weight: 600; flex-shrink: 0;
-        }
-        .sd-open { background: #f0fdf4; color: #16a34a; }
-        .sd-closed { background: #fef2f2; color: #ef4444; }
-        .sd-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-        .sd-tag {
-          background: #f5f5f0; color: #555; font-size: 12px;
-          font-weight: 500; padding: 4px 10px; border-radius: 100px;
-          text-transform: capitalize;
-        }
-        .sd-dist {
-          display: inline-flex; align-items: center; gap: 5px;
-          font-size: 12px; font-weight: 600; padding: 4px 10px;
-          border-radius: 100px; margin-top: 8px; border: 1px solid;
-        }
-        .sd-dist-near { border-color: #bbf7d0; background: #f0fdf4; color: #16a34a; }
-        .sd-dist-far { border-color: #fecaca; background: #fef2f2; color: #ef4444; }
-
-        /* Search */
-        .sd-search-wrap { position: relative; margin-bottom: 14px; }
-        .sd-search {
-          width: 100%; height: 44px; border-radius: 12px;
-          border: 1px solid #ebebeb; background: #fff;
-          padding: 0 16px 0 40px; font-size: 14px;
-          font-family: 'DM Sans', sans-serif; color: #1a1a1a;
-          outline: none; transition: border-color 0.15s;
-        }
-        .sd-search:focus { border-color: #22c55e; }
-        .sd-search::placeholder { color: #aaa; }
-        .sd-search-icon {
-          position: absolute; left: 13px; top: 50%;
-          transform: translateY(-50%); color: #aaa;
-          pointer-events: none; font-size: 15px;
-        }
-
-        /* Section label */
-        .sd-section-label {
-          font-size: 12px; font-weight: 600; color: #999;
-          text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px;
-        }
-
-        /* Products grid */
-        .sd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        @media (max-width: 480px) { .sd-grid { grid-template-columns: 1fr; } }
-
-        .sd-card {
-          background: #fff; border-radius: 14px;
-          border: 1px solid #ebebeb; padding: 16px;
-          display: flex; flex-direction: column; gap: 12px;
-        }
-        .sd-product-name { font-size: 15px; font-weight: 600; color: #1a1a1a; letter-spacing: -0.2px; }
-        .sd-product-price { font-size: 14px; font-weight: 600; color: #22c55e; margin-top: 2px; }
-        .sd-product-unit { font-size: 12px; color: #aaa; font-weight: 400; }
-        .sd-card-footer { display: flex; align-items: center; justify-content: space-between; }
-
-        .stock-in { background: #f0fdf4; color: #16a34a; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
-        .stock-low { background: #fffbeb; color: #d97706; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
-        .stock-out { background: #f3f4f6; color: #9ca3af; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
-
-        .sd-add-btn {
-          height: 34px; padding: 0 16px; border-radius: 9px; border: none;
-          font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif;
-          cursor: pointer; transition: all 0.15s;
-        }
-        .sd-add-active { background: #22c55e; color: #fff; }
-        .sd-add-active:hover { background: #16a34a; }
-        .sd-add-added { background: #dcfce7; color: #16a34a; }
-        .sd-add-disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; }
-
-        /* Empty */
-        .sd-empty {
-          background: #fff; border-radius: 14px; border: 1px solid #ebebeb;
-          padding: 40px; text-align: center; color: #aaa; font-size: 14px;
-          grid-column: 1 / -1;
-        }
-
-        /* Cart bar */
-        .sd-cart-bar {
-          position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-          background: #1a1a1a; color: #fff; border-radius: 100px;
-          padding: 13px 16px 13px 22px;
-          display: flex; align-items: center; gap: 16px;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-          min-width: 280px; max-width: 400px; z-index: 100;
-        }
-        .sd-cart-info { flex: 1; }
-        .sd-cart-count { font-size: 14px; font-weight: 600; }
-        .sd-cart-total { font-size: 12px; color: #888; margin-top: 1px; }
-        .sd-cart-btn {
-          background: #22c55e; color: #fff; border: none; border-radius: 100px;
-          padding: 9px 18px; font-size: 13px; font-weight: 600;
-          font-family: 'DM Sans', sans-serif; cursor: pointer; white-space: nowrap;
-          transition: background 0.15s;
-        }
-        .sd-cart-btn:hover { background: #16a34a; }
       `}</style>
 
-      {/* Navbar */}
-      <nav className="sd-nav">
-        <div className="sd-logo">Hyper<em>local</em></div>
-        <div className="sd-nav-right">
-          <span className="sd-user">Hello, {user?.name}</span>
-          <button onClick={handleLogout} className="sd-logout">Logout</button>
+      {/* ── Sticky Navbar ── */}
+      <nav className="bg-white border-b border-gray-100 px-4 h-15 flex items-center justify-between sticky top-0 z-30">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/marketplace')}
+            className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition border border-gray-100"
+          >
+            ←
+          </button>
+          <span className="font-bold text-gray-900 text-[17px] tracking-tight">
+            Hyper<span className="text-green-500">local</span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-400 hidden sm:block">{user?.name}</span>
+          <button
+            onClick={handleLogout}
+            className="text-xs font-600 text-red-500 bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition"
+          >
+            Logout
+          </button>
         </div>
       </nav>
 
-      <div className="sd-wrap">
+      <div className="max-w-2xl mx-auto px-4">
 
-        {/* Back */}
-        <button onClick={() => navigate('/marketplace')} className="sd-back">
-          ← Back to Marketplace
-        </button>
-
-        {/* Shop Header */}
+        {/* ── Shop Identity Header ── */}
         {shop && (
-          <div className="sd-header">
-            <div className="sd-header-top">
-              <div className="sd-header-left">
-                <div className="sd-icon-wrap">
-                  {catIcon[shop.category] || '🏪'}
-                </div>
-                <div>
-                  <div className="sd-name">{shop.name}</div>
-                  <div className="sd-meta">
-                    <span className="sd-meta-item">⭐ 4.8</span>
-                    <span className="sd-dot" />
-                    <span className="sd-meta-item">
-                      {distance ? `${distance} km away` : shop.location?.address || ''}
-                    </span>
-                    <span className="sd-dot" />
-                    <span className="sd-meta-item">{shop.contact}</span>
+          <div className="bg-white rounded-2xl border border-gray-100 mt-4 mb-3 overflow-hidden">
+            {/* Color bar */}
+            <div className="h-1 bg-linear-to-r from-green-400 to-emerald-500" />
+
+            <div className="p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-3">
+                  {/* Icon */}
+                  <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-3xl shrink-0 border border-green-100">
+                    {catIcon[shop.category] || '🏪'}
                   </div>
-                  {distance && (
-                    <div className={`sd-dist ${parseFloat(distance) <= 10 ? 'sd-dist-near' : 'sd-dist-far'}`}>
-                      📍 {distance} km
-                      {parseFloat(distance) > 10 && ' · Too far to order'}
+
+                  <div>
+                    <h1 className="text-[19px] font-700 text-gray-900 leading-tight tracking-tight">
+                      {shop.name}
+                    </h1>
+
+                    {/* Trust row */}
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <span className="text-xs font-600 text-amber-500">⭐ 4.8</span>
+                      <span className="text-gray-200 text-xs">•</span>
+                      <span className="text-xs text-gray-500">⚡ 10–15 min delivery</span>
+                      {distance && (
+                        <>
+                          <span className="text-gray-200 text-xs">•</span>
+                          <span className={`text-xs font-600 ${parseFloat(distance) <= 10 ? 'text-green-600' : 'text-red-500'}`}>
+                            📍 {distance} km
+                          </span>
+                        </>
+                      )}
                     </div>
-                  )}
+
+                    <p className="text-xs text-gray-400 mt-1 capitalize">
+                      {shop.category} · {inStockCount} items available
+                    </p>
+                  </div>
+                </div>
+
+                {/* Open/Closed */}
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-700 shrink-0 ${
+                  shop.isOpen ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${shop.isOpen ? 'bg-green-500' : 'bg-red-400'}`} />
+                  {shop.isOpen ? 'Open' : 'Closed'}
                 </div>
               </div>
-              <span className={`sd-open-badge ${shop.isOpen ? 'sd-open' : 'sd-closed'}`}>
-                {shop.isOpen ? '● Open' : '● Closed'}
-              </span>
-            </div>
-            <div className="sd-tags">
-              <span className="sd-tag">{shop.category}</span>
-              <span className="sd-tag">Essentials</span>
-              <span className="sd-tag">Daily Needs</span>
+
+              {/* Delivery badge */}
+              {distance && parseFloat(distance) > 10 ? (
+                <div className="mt-3 bg-red-50 border border-red-100 rounded-xl px-3 py-2 text-xs text-red-600 font-600">
+                  ⚠️ This shop is too far ({distance} km). Orders are limited to within 10 km.
+                </div>
+              ) : (
+                <div className="mt-3 bg-green-50 border border-green-100 rounded-xl px-3 py-2 flex items-center gap-2">
+                  <span className="text-sm">⚡</span>
+                  <span className="text-xs text-green-700 font-600">Express delivery · Estimated 10–15 mins</span>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* Search */}
-        <div className="sd-search-wrap">
-          <span className="sd-search-icon">🔍</span>
-          <input
-            className="sd-search"
-            type="text"
-            placeholder="Search products..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
+        {/* ── Sticky Search + Category ── */}
+        <div className="sticky-search">
+          {/* Search bar */}
+          <div className="relative mb-2">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300 text-sm">🔍</span>
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full h-11 bg-white border border-gray-100 rounded-xl pl-9 pr-4 text-sm text-gray-800 placeholder-gray-300 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-50 transition"
+            />
+          </div>
+
+          {/* Category pills */}
+          <div className="flex gap-2 overflow-x-auto pill-scroll pb-1">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-600 border transition ${
+                  activeCategory === cat
+                    ? 'bg-gray-900 text-white border-gray-900'
+                    : 'bg-white text-gray-500 border-gray-100 hover:border-gray-300'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Products */}
-        <div className="sd-section-label">
-          Products ({filteredProducts.length})
+        {/* ── Products ── */}
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-xs font-600 text-gray-400 uppercase tracking-wider">
+            {filteredProducts.length} products
+          </span>
+          {search && (
+            <button onClick={() => setSearch('')} className="text-xs text-green-600 font-600">
+              Clear ×
+            </button>
+          )}
         </div>
 
-        <div className="sd-grid">
-          {filteredProducts.length === 0 ? (
-            <div className="sd-empty">No products found.</div>
-          ) : (
-            filteredProducts.map(product => {
-              const { label, cls } = stockStatus(product.stock)
+        {filteredProducts.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center">
+            <div className="text-4xl mb-2">🔍</div>
+            <p className="text-sm text-gray-400">No products found</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-2.5 pb-6">
+            {filteredProducts.map(product => {
+              const qty = getCartQty(product._id)
+              const isOut = product.stock === 0
+              const isLow = product.stock > 0 && product.stock <= 5
+
               return (
-                <div key={product._id} className="sd-card">
-                  <div>
-                    <div className="sd-product-name">{product.name}</div>
-                    <div className="sd-product-price">
-                      ₹{product.price}
-                      <span className="sd-product-unit"> / {product.unit}</span>
-                    </div>
+                <div
+                  key={product._id}
+                  className="product-card bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col"
+                >
+                  {/* Product icon area */}
+                  <div className="bg-gray-50 flex items-center justify-center h-20 text-4xl border-b border-gray-50">
+                    {productIcon(product.name)}
                   </div>
-                  <div className="sd-card-footer">
-                    <span className={cls}>{label}</span>
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      disabled={product.stock === 0}
-                      className={`sd-add-btn ${added[product._id]
-                          ? 'sd-add-added'
-                          : product.stock === 0
-                            ? 'sd-add-disabled'
-                            : 'sd-add-active'
-                        }`}
-                    >
-                      {added[product._id] ? '✓ Added' : product.stock === 0 ? 'Out of Stock' : 'ADD'}
-                    </button>
+
+                  <div className="p-3 flex flex-col gap-2 flex-1">
+                    <div>
+                      <p className="text-sm font-700 text-gray-900 leading-snug">
+                        {product.name}
+                      </p>
+                      <p className="text-[13px] font-700 text-green-600 mt-0.5">
+                        ₹{product.price}
+                        <span className="text-xs font-400 text-gray-400"> / {product.unit}</span>
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-auto">
+                      {/* Stock label */}
+                      <span className={`text-[10px] font-700 px-2 py-0.5 rounded-md ${
+                        isOut
+                          ? 'bg-gray-100 text-gray-400'
+                          : isLow
+                          ? 'bg-amber-50 text-amber-600'
+                          : 'bg-green-50 text-green-700'
+                      }`}>
+                        {isOut ? 'Out of Stock' : isLow ? 'Low Stock' : 'In Stock'}
+                      </span>
+
+                      {/* Quantity stepper or ADD */}
+                      {isOut ? (
+                        <button disabled className="text-[11px] font-600 text-gray-300 bg-gray-50 px-3 py-1 rounded-lg">
+                          N/A
+                        </button>
+                      ) : qty > 0 ? (
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            className="qty-btn qty-minus"
+                            onClick={() => updateQuantity(product._id, qty - 1)}
+                          >
+                            −
+                          </button>
+                          <span className="text-sm font-700 text-gray-900 w-5 text-center">{qty}</span>
+                          <button
+                            className="qty-btn qty-plus"
+                            onClick={() => handleAddToCart(product)}
+                          >
+                            +
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleAddToCart(product)}
+                          className="text-[12px] font-700 text-green-700 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg transition border border-green-100"
+                        >
+                          ADD
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               )
-            })
-          )}
-        </div>
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Cart Bar */}
+      {/* ── Floating Cart Bar ── */}
       {totalItems > 0 && (
-        <div className="sd-cart-bar">
-          <div className="sd-cart-info">
-            <div className="sd-cart-count">{totalItems} item{totalItems > 1 ? 's' : ''}</div>
-            <div className="sd-cart-total">₹{totalPrice}</div>
+        <div className="cart-bar-enter fixed bottom-5 left-1/2 -translate-x-1/2 z-50"
+          style={{ width: 'calc(100% - 32px)', maxWidth: '480px' }}
+        >
+          <div className="bg-gray-900 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-2xl">
+            <div className="w-9 h-9 bg-green-500 rounded-xl flex items-center justify-center text-white font-700 text-sm shrink-0">
+              {totalItems}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-sm font-700">
+                {totalItems} item{totalItems > 1 ? 's' : ''} in cart
+              </p>
+              <p className="text-gray-400 text-xs">⚡ ~10 min delivery</p>
+            </div>
+            <div className="text-right shrink-0 mr-1">
+              <p className="text-green-400 text-sm font-700">₹{totalPrice}</p>
+            </div>
+            <button
+              onClick={() => navigate('/cart')}
+              className="bg-green-500 hover:bg-green-400 text-white text-sm font-700 px-4 py-2 rounded-xl transition shrink-0"
+            >
+              View Cart →
+            </button>
           </div>
-          <button onClick={() => navigate('/cart')} className="sd-cart-btn">
-            View Cart →
-          </button>
         </div>
       )}
     </div>
