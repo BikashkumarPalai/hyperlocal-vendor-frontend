@@ -16,6 +16,8 @@ const CreateShop = () => {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [locating, setLocating] = useState(false)
+  const [image, setImage] = useState(null)
+
 
   // Location picker ( Get cordinate from browser)
   const getLocation = () => {
@@ -46,8 +48,15 @@ const CreateShop = () => {
     setLoading(true)
     setError('')
     try {
-      await axios.post('/api/shop/create', formData, {
-        headers: { Authorization: `Bearer ${token}` }
+      const data = new FormData()
+      Object.entries(formData).forEach(([key, val]) => data.append(key, val))
+      if (image) data.append('image', image)
+
+      await axios.post('/api/shop/create', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
       })
       navigate('/vendor/dashboard')
     } catch (err) {
@@ -55,6 +64,9 @@ const CreateShop = () => {
     } finally {
       setLoading(false)
     }
+
+
+
   }
 
   return (
@@ -149,6 +161,24 @@ const CreateShop = () => {
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
               placeholder="e.g. 9876543210"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Shop Image (optional)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none"
+            />
+            {image && (
+              <img
+                src={URL.createObjectURL(image)}
+                alt="preview"
+                className="mt-2 h-24 w-24 object-cover rounded-lg"
+              />
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

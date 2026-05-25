@@ -9,6 +9,7 @@ const ProductManagement = () => {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [editingId, setEditingId] = useState(null)
+  const [image, setImage] = useState(null)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -37,20 +38,58 @@ const ProductManagement = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault()
+  //   setLoading(true)
+  //   setError('')
+  //   setSuccess('')
+  //   try {
+  //     if (editingId) {
+  //       await axios.put(`/api/product/update/${editingId}`, formData, { headers })
+  //       setSuccess('Product updated successfully')
+  //     } else {
+  //       await axios.post('/api/product/add', formData, { headers })
+  //       setSuccess('Product added successfully')
+  //     }
+  //     setFormData({ name: '', price: '', unit: '', stock: '', description: '' })
+  //     setEditingId(null)
+  //     fetchProducts()
+  //   } catch (err) {
+  //     setError(err.response?.data?.message || 'Something went wrong')
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError('')
     setSuccess('')
     try {
+      const data = new FormData()
+      Object.entries(formData).forEach(([key, val]) => data.append(key, val))
+      if (image) data.append('image', image)
+
+      const config = {
+        headers: {
+          ...headers,
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+
       if (editingId) {
-        await axios.put(`/api/product/update/${editingId}`, formData, { headers })
+        await axios.put(`/api/product/update/${editingId}`, data, config)
         setSuccess('Product updated successfully')
       } else {
-        await axios.post('/api/product/add', formData, { headers })
+        await axios.post('/api/product/add', data, config)
         setSuccess('Product added successfully')
       }
+
       setFormData({ name: '', price: '', unit: '', stock: '', description: '' })
+      setImage(null)
       setEditingId(null)
       fetchProducts()
     } catch (err) {
@@ -84,6 +123,7 @@ const ProductManagement = () => {
 
   const handleCancel = () => {
     setEditingId(null)
+    setImage(null)
     setFormData({ name: '', price: '', unit: '', stock: '', description: '' })
   }
 
@@ -191,6 +231,24 @@ const ProductManagement = () => {
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                 placeholder="Short description"
               />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Product Image
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImage(e.target.files[0])}
+                className="w-full border border-gray-300 rounded px-3 py-2"
+              />
+              {image && (
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt="preview"
+                  className="mt-2 h-20 w-20 object-cover rounded-lg"
+                />
+              )}
             </div>
 
             <div className="col-span-2 flex gap-3">
