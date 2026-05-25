@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
+import { address } from 'framer-motion/client'
 
 const CreateShop = () => {
   const navigate = useNavigate()
@@ -11,7 +12,8 @@ const CreateShop = () => {
     category: 'grocery',
     description: '',
     location: '',
-    contact: ''
+    contact: '',
+    address: ''
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -64,8 +66,6 @@ const CreateShop = () => {
     } finally {
       setLoading(false)
     }
-
-
 
   }
 
