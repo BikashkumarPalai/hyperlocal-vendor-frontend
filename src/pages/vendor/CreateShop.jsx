@@ -163,20 +163,30 @@ const CreateShop = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Shop Image (optional)
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Shop Image
             </label>
+
+            {/* Hidden real input */}
             <input
+              id="shop-image"
               type="file"
               accept="image/*"
               onChange={(e) => setImage(e.target.files[0])}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none"
+              className="hidden"
             />
+            <label
+              htmlFor="shop-image"
+              className=" flex items-center justify-center w-full cursor-pointer rounded-xl border border-white/30  bg-white/20 backdrop-blur-md px-4 py-3 text-gray-700 shadow-md transition hover:bg-white/30"
+            >
+              Choose File
+            </label>
+
             {image && (
               <img
                 src={URL.createObjectURL(image)}
                 alt="preview"
-                className="mt-2 h-24 w-24 object-cover rounded-lg"
+                className="mt-3 h-24 w-24 object-cover rounded-lg"
               />
             )}
           </div>
