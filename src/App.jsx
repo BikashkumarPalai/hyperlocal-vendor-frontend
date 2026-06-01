@@ -11,6 +11,7 @@ import ShopDetail from './pages/customer/ShopDetail';
 import MyOrders from './pages/customer/MyOrders';
 import VendorOrders from './pages/vendor/VendorOrders';
 import Cart from './pages/customer/Cart';
+import UpdateShop from './pages/vendor/UpdateShop';
 
 function App() {
   return (
