@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 
@@ -10,6 +10,7 @@ const ProductManagement = () => {
   const [success, setSuccess] = useState('')
   const [editingId, setEditingId] = useState(null)
   const [image, setImage] = useState(null)
+  const fileInputRef = useRef(null)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -90,6 +91,7 @@ const ProductManagement = () => {
 
       setFormData({ name: '', price: '', unit: '', stock: '', description: '' })
       setImage(null)
+      if (fileInputRef.current) fileInputRef.current.value = ''
       setEditingId(null)
       fetchProducts()
     } catch (err) {
@@ -124,6 +126,7 @@ const ProductManagement = () => {
   const handleCancel = () => {
     setEditingId(null)
     setImage(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
     setFormData({ name: '', price: '', unit: '', stock: '', description: '' })
   }
 
@@ -239,6 +242,7 @@ const ProductManagement = () => {
               <input
                 type="file"
                 accept="image/*"
+                ref={fileInputRef}
                 onChange={(e) => setImage(e.target.files[0])}
                 className="w-full border border-gray-300 rounded px-3 py-2"
               />
