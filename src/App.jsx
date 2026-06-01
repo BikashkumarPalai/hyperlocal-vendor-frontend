@@ -64,6 +64,13 @@ function App() {
               <CreateShop />
             </ProtectedRoute>
           } />
+          
+          {/* Update Shop */}
+          <Route path="/vendor/update-shop" element={
+            <ProtectedRoute role="vendor">
+              <UpdateShop />
+            </ProtectedRoute>
+          } />
 
           {/* Manage product */}
           <Route path="/vendor/products" element={

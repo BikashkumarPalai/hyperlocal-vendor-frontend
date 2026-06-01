@@ -11,6 +11,7 @@ const VendorDashboard = () => {
   const [analytics, setAnalytics] = useState(null)
   const [loading, setLoading] = useState(true)
 
+
   const headers = { Authorization: `Bearer ${token}` }
 
   useEffect(() => {
@@ -93,11 +94,17 @@ const VendorDashboard = () => {
                   <p className="text-sm text-gray-600 mt-2">{shop.description}</p>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${shop.isOpen
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-600'
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-red-100 text-red-600'
                   }`}>
                   {shop.isOpen ? 'Open' : 'Closed'}
                 </span>
+                <button
+                  onClick={() => navigate('/vendor/update-shop')}
+                  className="bg-blue-100 text-blue-600 px-4 py-1 rounded text-sm hover:bg-blue-200 transition"
+                >
+                  Edit Shop
+                </button>
               </div>
             </div>
 
