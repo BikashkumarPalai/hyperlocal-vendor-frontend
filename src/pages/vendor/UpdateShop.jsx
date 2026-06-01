@@ -64,7 +64,7 @@ const UpdateShop = () => {
                 }
             })
             setSuccess('Shop updated successfully!')
-            setTimeout(() => navigate('/vendor/dashboard'), 1500)
+            // setTimeout(() => navigate('/vendor/dashboard'), 1500)
         } catch (err) {
             setError(err.response?.data?.message || 'Something went wrong')
         } finally {
