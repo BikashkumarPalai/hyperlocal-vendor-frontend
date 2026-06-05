@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
+import ReviewModal from './ReviewModal'
 
 const MyOrders = () => {
   const { user, token, logout } = useAuth()
   const navigate = useNavigate()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
+  const [reviewingOrder, setReviewingOrder] = useState(null)
 
   useEffect(() => {
     fetchOrders()
@@ -39,6 +41,14 @@ const MyOrders = () => {
   const handleLogout = () => {
     logout()
     navigate('/login')
+  }
+
+  // After successful review submission — flip isReviewed in local state
+  // so the button changes to "Reviewed ✓" without refetching all orders
+  const handleReviewSuccess = (orderId) => {
+    setOrders(prev =>
+      prev.map(o => o._id === orderId ? { ...o, isReviewed: true } : o)
+    )
   }
 
   return (
@@ -114,11 +124,39 @@ const MyOrders = () => {
                   <span className="text-sm text-gray-500">Total</span>
                   <span className="font-bold text-gray-800">₹{order.totalPrice}</span>
                 </div>
+
+                {/* Review button Only when order completed */}
+                {order.status === 'completed' && (
+                  order.isReviewed ? (
+                    <div className="mt-3 text-center text-sm font-medium text-green-600 bg-green-50 py-2 rounded-lg">
+                      ✓ Reviewed
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setReviewingOrder(order)}
+                      className="mt-3 w-full text-sm font-semibold text-amber-700 bg-amber-50 border border-amber-200 py-2 rounded-lg hover:bg-amber-100 transition"
+                    >
+                      ⭐ Write a Review
+                    </button>
+                  )
+                )}
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Review Modal */}
+      {reviewingOrder && (
+        <ReviewModal
+          order={reviewingOrder}
+          onClose={() => setReviewingOrder(null)}
+          onSuccess={() => {
+            handleReviewSuccess(reviewingOrder._id)
+            setReviewingOrder(null)
+          }}
+        />
+      )}
     </div>
   )
 }
