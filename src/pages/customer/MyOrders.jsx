@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
-import ReviewModal from './ReviewModal'
+import ReviewModal from './Reviewmodal'
 
 const MyOrders = () => {
   const { user, token, logout } = useAuth()
