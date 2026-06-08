@@ -9,7 +9,7 @@ const ShopDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user, logout } = useAuth()
-  const { cart, addToCart, totalItems, totalPrice } = useCart()
+  const { cart, addToCart, updateQuantity, totalItems, totalPrice } = useCart()
   const [shop, setShop] = useState(null)
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -54,8 +54,14 @@ const ShopDetail = () => {
   }, [shop])
 
   const handleAddToCart = (product) => {
+    const currentQty = getCartQty(product._id)
+
+    if (currentQty >= product.stock) return
+
     addToCart(product, id)
+
     setAdded(prev => ({ ...prev, [product._id]: true }))
+
     setTimeout(() => {
       setAdded(prev => ({ ...prev, [product._id]: false }))
     }, 1000)
@@ -72,6 +78,12 @@ const ShopDetail = () => {
         <p className="text-gray-500">Loading...</p>
       </div>
     )
+  }
+
+  // Helper function for getting the added atem count 
+  const getCartQty = (productId) => {
+    const item = cart.find(item => item._id === productId)
+    return item ? item.quantity : 0
   }
 
   return (
@@ -154,18 +166,42 @@ const ShopDetail = () => {
                     Stock: {product.stock}
                   </p>
                 </div>
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  disabled={product.stock === 0}
-                  className={`px-4 py-2 rounded text-sm font-medium transition ${added[product._id]
-                    ? 'bg-green-500 text-white'
-                    : product.stock === 0
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
-                    }`}
-                >
-                  {added[product._id] ? 'Added!' : product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-                </button>
+                {getCartQty(product._id) > 0 ? (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        updateQuantity(product._id, getCartQty(product._id) - 1)
+                      }
+                      className="bg-gray-200 px-3 py-1 rounded"
+                    >
+                      -
+                    </button>
+
+                    <span>{getCartQty(product._id)}</span>
+
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      disabled={getCartQty(product._id) >= product.stock}
+                      className={`px-3 py-1 rounded ${getCartQty(product._id) >= product.stock
+                          ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                          : 'bg-blue-600 text-white'
+                        }`}
+                    >
+                      +
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    disabled={product.stock === 0}
+                    className={`px-4 py-2 rounded text-sm font-medium ${product.stock === 0
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-blue-600 text-white'
+                      }`}
+                  >
+                    {product.stock === 0 ? 'Out of Stock' : 'Add'}
+                  </button>
+                )}
               </div>
             ))}
           </div>
