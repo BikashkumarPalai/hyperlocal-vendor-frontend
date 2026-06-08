@@ -763,7 +763,7 @@ export default function Marketplace() {
               delivered <em>fast</em>.
             </h1>
             <p className="hero-sub">
-              Groceries, fruits, dairy, bakery and daily essentials from verified local shops near you.
+              Discover nearby stores, compare products, and order directly from local vendors in your area.
             </p>
             <div className="hero-btns">
               <button
@@ -783,9 +783,9 @@ export default function Marketplace() {
             {/* Trust badges — Lucide icons */}
             <div className="trust-row">
               {[
-                { Icon: BadgeCheck, text: 'Verified local shops', color: '#16a34a' },
-                { Icon: Zap, text: 'Fast delivery', color: '#d97706' },
-                { Icon: ShieldCheck, text: 'Secure payments', color: '#2563eb' },
+                { Icon: BadgeCheck, text: 'Verified Vendors', color: '#16a34a' },
+                { Icon: MapPin, text: 'Nearby Shops', color: '#ea580c' },
+                { Icon: ShieldCheck, text: 'Secure Payments', color: '#2563eb' },
               ].map(({ Icon, text, color }, i) => (
                 <div key={i} className="trust-badge">
                   <div className="trust-icon-circle">
