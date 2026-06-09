@@ -606,8 +606,10 @@ export default function Marketplace() {
         .cart-count { background: #fff; color: #16a34a; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
 
         /* ── Hero ── */
-        .hero { background: linear-gradient(135deg, #f0fdf4 0%, #fafffe 40%, #fffbeb 100%); padding: 64px 0 56px; border-bottom: 1px solid #f1f5f9; }
-        .hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+        .hero { background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #f0fdf4 100%); padding: 80px 0 72px; border-bottom: 1px solid #f1f5f9; overflow: hidden; position: relative; }
+        .hero::before { content: ''; position: absolute; top: -80px; right: -80px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%); pointer-events: none; }
+        .hero::after { content: ''; position: absolute; bottom: -60px; left: -60px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(34,197,94,0.05) 0%, transparent 70%); pointer-events: none; }
+        .hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 55% 45%; gap: 40px; align-items: center; position: relative; z-index: 1; }
         .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; color: #16a34a; padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; }
         .hero-title { font-size: 48px; font-weight: 900; color: #0f172a; line-height: 1.08; letter-spacing: -2px; margin-bottom: 18px; }
         .hero-title em { color: #22c55e; font-style: normal; }
@@ -618,9 +620,9 @@ export default function Marketplace() {
         .hero-btn-secondary { padding: 14px 28px; background: #fff; color: #374151; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
         .hero-btn-secondary:hover { border-color: #22c55e; color: #22c55e; }
 
-        .hero-right { display: flex; justify-content: center; align-items: center; min-height: 500px;}
-
-        .hero-right img { width: 100%; max-width: 650px; height: auto; object-fit: contain }
+        .hero-right { display: flex; justify-content: center; align-items: center; min-height: 480px; position: relative; }
+.hero-right::before { content: ''; position: absolute; inset: 10%; border-radius: 50%; background: radial-gradient(circle, rgba(34,197,94,0.12) 0%, transparent 70%); z-index: 0; }
+.hero-right img { width: 100%; max-width: 580px; height: auto; object-fit: contain; position: relative; z-index: 1; filter: drop-shadow(0 24px 48px rgba(34,197,94,0.15)); mix-blend-mode: multiply; }
 
         /* Trust badges */
         .trust-row { display: flex; gap: 20px; margin-top: 36px; flex-wrap: wrap; }
@@ -779,20 +781,26 @@ export default function Marketplace() {
                 </div>
               ))}
             </div>
+            {/* Stats row */}
+            <div style={{ display: 'flex', gap: 32, marginTop: 40, paddingTop: 32, borderTop: '1px solid #e2e8f0' }}>
+              {[
+                { value: '150+', label: 'Local Vendors' },
+                { value: '5000+', label: 'Orders Delivered' },
+                { value: '4.8★', label: 'Avg Rating' },
+              ].map(({ value, label }) => (
+                <div key={label}>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: '#0f172a', letterSpacing: -1 }}>{value}</div>
+                  <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500, marginTop: 2 }}>{label}</div>
+                </div>
+              ))}
+            </div>
           </div>
           {/* Image part */}
           <div className="hero-right">
             <img
               src={Hero}
               alt="Local marketplace"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                objectPosition: 'center',
-                filter: 'drop-shadow(0 20px 48px rgba(34,197,94,0.12))',
-                mixBlendMode: 'multiply',
-              }}
+              style={{ width: '100%', maxWidth: 580, height: 'auto', objectFit: 'contain' }}
             />
           </div>
         </div>
