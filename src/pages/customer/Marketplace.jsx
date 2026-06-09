@@ -622,19 +622,6 @@ export default function Marketplace() {
         .trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #374151; }
         .trust-icon-circle { width: 32px; height: 32px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); flex-shrink: 0; }
 
-        /* Hero right — floating cards */
-        .hero-right { display: flex; justify-content: center; align-items: center; position: relative; height: 300px; }
-        .float-card { position: absolute; background: #fff; border-radius: 20px; padding: 16px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; }
-        .float-card-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .float-card-text { font-size: 13px; }
-        .float-card-name { font-weight: 700; color: #0f172a; margin-bottom: 2px; }
-        .float-card-price { font-weight: 600; color: #22c55e; }
-        .float-big { top: 10px; left: 20px; }
-        .float-mid { bottom: 30px; right: 10px; }
-        .float-small { top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .delivery-pill { position: absolute; top: 20px; right: 20px; background: #22c55e; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-        .shops-pill { position: absolute; bottom: 20px; left: 30px; background: #0f172a; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-
         /* ── Main content ── */
         .main { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
@@ -680,15 +667,7 @@ export default function Marketplace() {
         .empty-icon { margin-bottom: 14px; display: flex; justify-content: center; }
         .empty-title { font-size: 20px; font-weight: 800; color: #374151; margin-bottom: 6px; }
         .empty-sub { font-size: 14px; color: #94a3b8; }
-
-        /* Promo banner */
-        .promo-banner { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 24px; padding: 32px 40px; margin-bottom: 48px; display: flex; justify-content: space-between; align-items: center; }
-        .promo-text h3 { font-size: 24px; font-weight: 900; color: #fff; letter-spacing: -0.5px; margin-bottom: 6px; }
-        .promo-text p { font-size: 14px; color: #94a3b8; }
-        .promo-badge { background: #22c55e; color: #fff; padding: 6px 16px; border-radius: 100px; font-size: 13px; font-weight: 800; margin-bottom: 12px; display: inline-block; }
-        .promo-btn { padding: 12px 24px; background: #22c55e; color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
-        .promo-btn:hover { background: #16a34a; }
-
+        
         /* Results bar */
         .results-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .results-text { font-size: 14px; color: #64748b; font-weight: 500; }
@@ -756,14 +735,14 @@ export default function Marketplace() {
           <div>
             <div className="hero-tag">
               <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4" /></svg>
-              {userLocation ? 'Shops near you · 10km radius' : 'Your local marketplace'}
+              Discover Local Vendors Near You
             </div>
             <h1 className="hero-title">
-              Everything you need,<br />
-              delivered <em>fast</em>.
+              Everything Nearby,<br />
+              In One <em>Marketplace</em>.
             </h1>
             <p className="hero-sub">
-              Discover nearby stores, compare products, and order directly from local vendors in your area.
+              Explore trusted local vendors, discover products around you, and get everything delivered from nearby shops.
             </p>
             <div className="hero-btns">
               <button
@@ -796,48 +775,20 @@ export default function Marketplace() {
               ))}
             </div>
           </div>
-
-          {/* Floating cards — Lucide icons */}
+          {/* Image part */}
           <div className="hero-right">
-            <div className="delivery-pill">
-              <Zap size={12} />
-              10 min delivery
-            </div>
-
-            <div className="float-card float-big">
-              <div className="float-card-icon" style={{ background: '#f0fdf4', boxShadow: '0 4px 12px rgba(34,197,94,0.15)' }}>
-                <ShoppingBasket size={26} color="#16a34a" strokeWidth={1.8} />
-              </div>
-              <div className="float-card-text">
-                <div className="float-card-name">Fresh Groceries</div>
-                <div className="float-card-price">From ₹49</div>
-              </div>
-            </div>
-
-            <div className="float-card float-small">
-              <div className="float-card-icon" style={{ background: '#eff6ff', boxShadow: '0 4px 12px rgba(37,99,235,0.12)' }}>
-                <Milk size={26} color="#2563eb" strokeWidth={1.8} />
-              </div>
-              <div className="float-card-text">
-                <div className="float-card-name">Dairy Products</div>
-                <div className="float-card-price">From ₹25</div>
-              </div>
-            </div>
-
-            <div className="float-card float-mid">
-              <div className="float-card-icon" style={{ background: '#fef2f2', boxShadow: '0 4px 12px rgba(220,38,38,0.12)' }}>
-                <Apple size={26} color="#dc2626" strokeWidth={1.8} />
-              </div>
-              <div className="float-card-text">
-                <div className="float-card-name">Fresh Fruits</div>
-                <div className="float-card-price">From ₹35</div>
-              </div>
-            </div>
-
-            <div className="shops-pill">
-              <MapPin size={12} />
-              {shops.length} shops nearby
-            </div>
+            <img
+              src="/assets/Hero.jpeg"
+              alt="Local marketplace"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                objectPosition: 'center',
+                filter: 'drop-shadow(0 20px 48px rgba(34,197,94,0.12))',
+                mixBlendMode: 'multiply',
+              }}
+            />
           </div>
         </div>
       </section>
@@ -871,18 +822,6 @@ export default function Marketplace() {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* ── Promo banner ── */}
-        <div className="promo-banner">
-          <div className="promo-text">
-            <div className="promo-badge">Limited Time</div>
-            <h3>Free delivery on your first order</h3>
-            <p>Use code HYPERLOCAL at checkout</p>
-          </div>
-          <button className="promo-btn" onClick={() => document.getElementById('shops-section').scrollIntoView({ behavior: 'smooth' })}>
-            Order Now →
-          </button>
         </div>
 
         {/* ── Shops section ── */}
@@ -1012,5 +951,3 @@ export default function Marketplace() {
     </div>
   )
 }
-
-
