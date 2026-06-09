@@ -335,7 +335,6 @@ import { useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
-import Hero from '../../assets/Hero.jpeg'
 import {
   ShoppingBasket, Milk, Apple, Wheat,
   BadgeCheck, Zap, ShieldCheck,
@@ -606,10 +605,8 @@ export default function Marketplace() {
         .cart-count { background: #fff; color: #16a34a; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
 
         /* ── Hero ── */
-        .hero { background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #f0fdf4 100%); padding: 80px 0 72px; border-bottom: 1px solid #f1f5f9; overflow: hidden; position: relative; }
-        .hero::before { content: ''; position: absolute; top: -80px; right: -80px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%); pointer-events: none; }
-        .hero::after { content: ''; position: absolute; bottom: -60px; left: -60px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(34,197,94,0.05) 0%, transparent 70%); pointer-events: none; }
-        .hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 55% 45%; gap: 40px; align-items: center; position: relative; z-index: 1; }
+        .hero { background: linear-gradient(135deg, #f0fdf4 0%, #fafffe 40%, #fffbeb 100%); padding: 64px 0 56px; border-bottom: 1px solid #f1f5f9; }
+        .hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
         .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; color: #16a34a; padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; }
         .hero-title { font-size: 48px; font-weight: 900; color: #0f172a; line-height: 1.08; letter-spacing: -2px; margin-bottom: 18px; }
         .hero-title em { color: #22c55e; font-style: normal; }
@@ -620,14 +617,23 @@ export default function Marketplace() {
         .hero-btn-secondary { padding: 14px 28px; background: #fff; color: #374151; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
         .hero-btn-secondary:hover { border-color: #22c55e; color: #22c55e; }
 
-        .hero-right { display: flex; justify-content: center; align-items: center; min-height: 480px; position: relative; }
-.hero-right::before { content: ''; position: absolute; inset: 10%; border-radius: 50%; background: radial-gradient(circle, rgba(34,197,94,0.12) 0%, transparent 70%); z-index: 0; }
-.hero-right img { width: 100%; max-width: 580px; height: auto; object-fit: contain; position: relative; z-index: 1; filter: drop-shadow(0 24px 48px rgba(34,197,94,0.15)); mix-blend-mode: multiply; }
-
         /* Trust badges */
         .trust-row { display: flex; gap: 20px; margin-top: 36px; flex-wrap: wrap; }
         .trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #374151; }
         .trust-icon-circle { width: 32px; height: 32px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); flex-shrink: 0; }
+
+        /* Hero right — floating cards */
+        .hero-right { display: flex; justify-content: center; align-items: center; position: relative; height: 300px; }
+        .float-card { position: absolute; background: #fff; border-radius: 20px; padding: 16px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; }
+        .float-card-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .float-card-text { font-size: 13px; }
+        .float-card-name { font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+        .float-card-price { font-weight: 600; color: #22c55e; }
+        .float-big { top: 10px; left: 20px; }
+        .float-mid { bottom: 30px; right: 10px; }
+        .float-small { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .delivery-pill { position: absolute; top: 20px; right: 20px; background: #22c55e; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .shops-pill { position: absolute; bottom: 20px; left: 30px; background: #0f172a; color: #fff; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
 
         /* ── Main content ── */
         .main { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
@@ -674,6 +680,14 @@ export default function Marketplace() {
         .empty-icon { margin-bottom: 14px; display: flex; justify-content: center; }
         .empty-title { font-size: 20px; font-weight: 800; color: #374151; margin-bottom: 6px; }
         .empty-sub { font-size: 14px; color: #94a3b8; }
+
+        /* Promo banner */
+        .promo-banner { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 24px; padding: 32px 40px; margin-bottom: 48px; display: flex; justify-content: space-between; align-items: center; }
+        .promo-text h3 { font-size: 24px; font-weight: 900; color: #fff; letter-spacing: -0.5px; margin-bottom: 6px; }
+        .promo-text p { font-size: 14px; color: #94a3b8; }
+        .promo-badge { background: #22c55e; color: #fff; padding: 6px 16px; border-radius: 100px; font-size: 13px; font-weight: 800; margin-bottom: 12px; display: inline-block; }
+        .promo-btn { padding: 12px 24px; background: #22c55e; color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
+        .promo-btn:hover { background: #16a34a; }
 
         /* Results bar */
         .results-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -742,14 +756,14 @@ export default function Marketplace() {
           <div>
             <div className="hero-tag">
               <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4" /></svg>
-              Discover Local Vendors Near You
+              {userLocation ? 'Shops near you · 10km radius' : 'Your local marketplace'}
             </div>
             <h1 className="hero-title">
-              Everything Nearby,<br />
-              In One <em>Marketplace</em>.
+              Everything you need,<br />
+              delivered <em>fast</em>.
             </h1>
             <p className="hero-sub">
-              Explore trusted local vendors, discover products around you, and get everything delivered from nearby shops.
+              Discover nearby stores, compare products, and order directly from local vendors in your area.
             </p>
             <div className="hero-btns">
               <button
@@ -781,27 +795,49 @@ export default function Marketplace() {
                 </div>
               ))}
             </div>
-            {/* Stats row */}
-            <div style={{ display: 'flex', gap: 32, marginTop: 40, paddingTop: 32, borderTop: '1px solid #e2e8f0' }}>
-              {[
-                { value: '150+', label: 'Local Vendors' },
-                { value: '5000+', label: 'Orders Delivered' },
-                { value: '4.8★', label: 'Avg Rating' },
-              ].map(({ value, label }) => (
-                <div key={label}>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: '#0f172a', letterSpacing: -1 }}>{value}</div>
-                  <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500, marginTop: 2 }}>{label}</div>
-                </div>
-              ))}
-            </div>
           </div>
-          {/* Image part */}
+
+          {/* Floating cards — Lucide icons */}
           <div className="hero-right">
-            <img
-              src={Hero}
-              alt="Local marketplace"
-              style={{ width: '100%', maxWidth: 580, height: 'auto', objectFit: 'contain' }}
-            />
+            <div className="delivery-pill">
+              <Zap size={12} />
+              10 min delivery
+            </div>
+
+            <div className="float-card float-big">
+              <div className="float-card-icon" style={{ background: '#f0fdf4', boxShadow: '0 4px 12px rgba(34,197,94,0.15)' }}>
+                <ShoppingBasket size={26} color="#16a34a" strokeWidth={1.8} />
+              </div>
+              <div className="float-card-text">
+                <div className="float-card-name">Fresh Groceries</div>
+                <div className="float-card-price">From ₹49</div>
+              </div>
+            </div>
+
+            <div className="float-card float-small">
+              <div className="float-card-icon" style={{ background: '#eff6ff', boxShadow: '0 4px 12px rgba(37,99,235,0.12)' }}>
+                <Milk size={26} color="#2563eb" strokeWidth={1.8} />
+              </div>
+              <div className="float-card-text">
+                <div className="float-card-name">Dairy Products</div>
+                <div className="float-card-price">From ₹25</div>
+              </div>
+            </div>
+
+            <div className="float-card float-mid">
+              <div className="float-card-icon" style={{ background: '#fef2f2', boxShadow: '0 4px 12px rgba(220,38,38,0.12)' }}>
+                <Apple size={26} color="#dc2626" strokeWidth={1.8} />
+              </div>
+              <div className="float-card-text">
+                <div className="float-card-name">Fresh Fruits</div>
+                <div className="float-card-price">From ₹35</div>
+              </div>
+            </div>
+
+            <div className="shops-pill">
+              <MapPin size={12} />
+              {shops.length} shops nearby
+            </div>
           </div>
         </div>
       </section>
@@ -835,6 +871,18 @@ export default function Marketplace() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* ── Promo banner ── */}
+        <div className="promo-banner">
+          <div className="promo-text">
+            <div className="promo-badge">Limited Time</div>
+            <h3>Free delivery on your first order</h3>
+            <p>Use code HYPERLOCAL at checkout</p>
+          </div>
+          <button className="promo-btn" onClick={() => document.getElementById('shops-section').scrollIntoView({ behavior: 'smooth' })}>
+            Order Now →
+          </button>
         </div>
 
         {/* ── Shops section ── */}
