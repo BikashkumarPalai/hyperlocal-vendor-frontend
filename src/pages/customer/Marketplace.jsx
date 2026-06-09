@@ -618,6 +618,10 @@ export default function Marketplace() {
         .hero-btn-secondary { padding: 14px 28px; background: #fff; color: #374151; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
         .hero-btn-secondary:hover { border-color: #22c55e; color: #22c55e; }
 
+        .hero-right { display: flex; justify-content: center; align-items: center; min-height: 500px;}
+
+        .hero-right img { width: 100%; max-width: 650px; height: auto; object-fit: contain }
+
         /* Trust badges */
         .trust-row { display: flex; gap: 20px; margin-top: 36px; flex-wrap: wrap; }
         .trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #374151; }
@@ -779,7 +783,7 @@ export default function Marketplace() {
           {/* Image part */}
           <div className="hero-right">
             <img
-              src="/assets/Hero.jpeg"
+              src={Hero}
               alt="Local marketplace"
               style={{
                 width: '100%',
