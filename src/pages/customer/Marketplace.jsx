@@ -335,6 +335,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
+import Hero from '../../assets/Hero.jpeg'
 import {
   ShoppingBasket, Milk, Apple, Wheat,
   BadgeCheck, Zap, ShieldCheck,
@@ -667,7 +668,7 @@ export default function Marketplace() {
         .empty-icon { margin-bottom: 14px; display: flex; justify-content: center; }
         .empty-title { font-size: 20px; font-weight: 800; color: #374151; margin-bottom: 6px; }
         .empty-sub { font-size: 14px; color: #94a3b8; }
-        
+
         /* Results bar */
         .results-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .results-text { font-size: 14px; color: #64748b; font-weight: 500; }
